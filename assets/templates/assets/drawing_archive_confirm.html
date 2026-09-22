@@ -1,0 +1,76 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Archive Drawing" %} | Asset QR System
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>{% trans "Archive Drawing" %}</h2>
+
+        <p>
+            {% trans "Confirm that you want to archive this drawing record." %}
+        </p>
+    </div>
+</div>
+
+<div class="form-container">
+
+    <div class="alert alert-warning">
+        <strong>
+            {% trans "This drawing will not be permanently deleted." %}
+        </strong>
+
+        <p>
+            {% trans "Its status will be changed to Archived, and the record and file will remain in the system." %}
+        </p>
+    </div>
+
+    <div class="detail-card">
+        <p>
+            <strong>{% trans "Drawing Number:" %}</strong>
+            {{ drawing.drawing_number }}
+        </p>
+
+        <p>
+            <strong>{% trans "Title:" %}</strong>
+            {{ drawing.title }}
+        </p>
+
+        <p>
+            <strong>{% trans "Revision:" %}</strong>
+            {{ drawing.revision }}
+        </p>
+
+        <p>
+            <strong>{% trans "Current Status:" %}</strong>
+            {{ drawing.get_status_display }}
+        </p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-actions">
+            <button
+                type="submit"
+                class="button button-danger"
+            >
+                {% trans "Archive Drawing" %}
+            </button>
+
+            <a
+                href="{% url 'assets:drawing_list' %}"
+                class="button button-secondary"
+            >
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

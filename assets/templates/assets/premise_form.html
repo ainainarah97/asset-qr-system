@@ -1,0 +1,243 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+{% if premise %}
+Edit Premise | Asset QR System
+{% else %}
+Add Premise | Asset QR System
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            {% if premise %}
+                Edit Premise
+            {% else %}
+                Add Premise
+            {% endif %}
+        </h2>
+
+        <p>
+            Register and manage premise information.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<div class="form-card">
+
+
+<form method="post">
+
+{% csrf_token %}
+
+
+<div class="form-grid">
+
+
+<!-- NAME -->
+
+<div class="form-group">
+
+<label for="{{ form.name.id_for_label }}">
+Premise Name
+</label>
+
+{{ form.name }}
+
+{% if form.name.errors %}
+<div class="form-error">
+{{ form.name.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- DPA NUMBER -->
+
+<div class="form-group">
+
+<label for="{{ form.dpa_number.id_for_label }}">
+DPA Number
+</label>
+
+{{ form.dpa_number }}
+
+{% if form.dpa_number.errors %}
+<div class="form-error">
+{{ form.dpa_number.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- ADDRESS -->
+
+<div class="form-group form-group-full">
+
+<label for="{{ form.address.id_for_label }}">
+Address
+</label>
+
+{{ form.address }}
+
+{% if form.address.errors %}
+<div class="form-error">
+{{ form.address.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- MINISTRY -->
+
+<div class="form-group">
+
+<label for="{{ form.ministry.id_for_label }}">
+Ministry
+</label>
+
+{{ form.ministry }}
+
+{% if form.ministry.errors %}
+<div class="form-error">
+{{ form.ministry.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- DEPARTMENT -->
+
+<div class="form-group">
+
+<label for="{{ form.department.id_for_label }}">
+Department
+</label>
+
+{{ form.department }}
+
+{% if form.department.errors %}
+<div class="form-error">
+{{ form.department.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- STATE -->
+
+<div class="form-group">
+
+<label for="{{ form.state.id_for_label }}">
+State
+</label>
+
+{{ form.state }}
+
+{% if form.state.errors %}
+<div class="form-error">
+{{ form.state.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- DISTRICT -->
+
+<div class="form-group">
+
+<label for="{{ form.district.id_for_label }}">
+District
+</label>
+
+{{ form.district }}
+
+{% if form.district.errors %}
+<div class="form-error">
+{{ form.district.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- STATUS -->
+
+<div class="form-group">
+
+<label for="{{ form.status.id_for_label }}">
+Status
+</label>
+
+{{ form.status }}
+
+{% if form.status.errors %}
+<div class="form-error">
+{{ form.status.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+</div>
+
+
+
+<div class="form-actions">
+
+
+<a
+href="{% url 'assets:premise_list' %}"
+class="button button-secondary"
+>
+Cancel
+</a>
+
+
+<button
+type="submit"
+class="button"
+>
+{% if premise %}
+Save Changes
+{% else %}
+Save Premise
+{% endif %}
+</button>
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+
+{% endblock %}

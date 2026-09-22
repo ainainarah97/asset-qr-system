@@ -1,0 +1,466 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+Print Label — {{ qr.qr_id }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .label-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .label-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .label-toolbar-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .asset-label {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 22px;
+        background: #ffffff;
+        border: 3px solid #0f4c81;
+        border-radius: 10px;
+        color: #172033;
+    }
+
+    .label-header {
+        padding-bottom: 12px;
+        border-bottom: 2px solid #0f4c81;
+        text-align: center;
+    }
+
+    .label-header h1 {
+        margin: 0;
+        color: #0f4c81;
+        font-size: 22px;
+        text-transform: uppercase;
+    }
+
+    .label-header p {
+        margin: 6px 0 0;
+        color: #475569;
+        font-size: 13px;
+    }
+
+    .label-content {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 22px;
+        align-items: center;
+        padding-top: 20px;
+    }
+
+    .label-qr {
+        text-align: center;
+    }
+
+    .label-qr img {
+        display: block;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+        padding: 7px;
+        background: white;
+        border: 1px solid #cbd5e1;
+    }
+
+    .label-qr-id {
+        margin-top: 9px;
+        font-size: 15px;
+        font-weight: bold;
+        word-break: break-word;
+    }
+
+    .label-details h2 {
+        margin: 0 0 15px;
+        color: #0f4c81;
+        font-size: 22px;
+    }
+
+    .label-row {
+        display: grid;
+        grid-template-columns: 130px 1fr;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+    }
+
+    .label-name {
+        color: #64748b;
+        font-weight: bold;
+    }
+
+    .label-value {
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+    .label-status {
+        display: inline-block;
+        padding: 5px 10px;
+        background: #dcfce7;
+        color: #166534;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .label-footer {
+        margin-top: 18px;
+        padding-top: 12px;
+        border-top: 2px solid #0f4c81;
+        color: #475569;
+        text-align: center;
+        font-size: 11px;
+    }
+
+    @media (max-width: 650px) {
+        .label-toolbar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .label-content {
+            grid-template-columns: 1fr;
+        }
+
+        .label-row {
+            grid-template-columns: 1fr;
+            gap: 3px;
+        }
+    }
+
+    @media print {
+        @page {
+            margin: 8mm;
+        }
+
+        body {
+            background: white !important;
+        }
+
+        header,
+        nav,
+        footer,
+        .site-header,
+        .navbar,
+        .sidebar,
+        .label-toolbar {
+            display: none !important;
+        }
+
+        main,
+        .main-content,
+        .content-container,
+        .label-page {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .asset-label {
+            max-width: none;
+            box-shadow: none;
+            break-inside: avoid;
+        }
+    }
+</style>
+
+
+<div class="label-page">
+
+    <div class="label-toolbar">
+        <div>
+            <h2>Printable QR Asset Label</h2>
+
+            <p>
+                Preview the label before printing.
+            </p>
+        </div>
+
+        <div class="label-toolbar-actions">
+            <button
+                type="button"
+                class="button"
+                onclick="window.print()"
+            >
+                Print Label
+            </button>
+
+            <a
+                href="{% url 'assets:dynamic_qr_image' qr.qr_id %}"
+                class="button button-secondary"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Open QR Image
+            </a>
+
+            <a
+                href="{% url 'assets:qr_code_list' %}"
+                class="button button-secondary"
+            >
+                Back to QR Codes
+            </a>
+        </div>
+    </div>
+
+
+    <section class="asset-label">
+
+        <div class="label-header">
+            <h1>
+                Government Immovable Asset
+            </h1>
+
+            <p>
+                QR Asset Identification Label
+            </p>
+        </div>
+
+
+        <div class="label-content">
+
+            <div class="label-qr">
+                <img
+                    src="{% url 'assets:dynamic_qr_image' qr.qr_id %}"
+                    alt="QR code for {{ qr.qr_id }}"
+                >
+
+                <div class="label-qr-id">
+                    {{ qr.qr_id }}
+                </div>
+            </div>
+
+
+            <div class="label-details">
+
+                {% if qr.component %}
+
+                    <h2>{{ qr.component.name }}</h2>
+
+                    <div class="label-row">
+                        <div class="label-name">Label Type</div>
+                        <div class="label-value">Component</div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Component ID</div>
+                        <div class="label-value">
+                            {{ qr.component.component_id }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Location</div>
+                        <div class="label-value">
+                            {{ qr.component.room.room_tag }}
+                            — {{ qr.component.room.name }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Block</div>
+                        <div class="label-value">
+                            {{ qr.component.room.level.block.code }}
+                            — {{ qr.component.room.level.block.name }}
+                        </div>
+                    </div>
+
+
+                {% elif qr.room %}
+
+                    <h2>{{ qr.room.name }}</h2>
+
+                    <div class="label-row">
+                        <div class="label-name">Label Type</div>
+                        <div class="label-value">
+                            Room / Open Area
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Room Tag</div>
+                        <div class="label-value">
+                            {{ qr.room.room_tag }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Level</div>
+                        <div class="label-value">
+                            {{ qr.room.level.code }}
+                            — {{ qr.room.level.name }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Block</div>
+                        <div class="label-value">
+                            {{ qr.room.level.block.code }}
+                            — {{ qr.room.level.block.name }}
+                        </div>
+                    </div>
+
+
+                {% elif qr.level %}
+
+                    <h2>{{ qr.level.name }}</h2>
+
+                    <div class="label-row">
+                        <div class="label-name">Label Type</div>
+                        <div class="label-value">Level</div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Level Code</div>
+                        <div class="label-value">
+                            {{ qr.level.block.code }}.{{ qr.level.code }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Block</div>
+                        <div class="label-value">
+                            {{ qr.level.block.name }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Premise</div>
+                        <div class="label-value">
+                            {{ qr.level.block.premise.name }}
+                        </div>
+                    </div>
+
+
+                {% elif qr.block %}
+
+                    <h2>{{ qr.block.name }}</h2>
+
+                    <div class="label-row">
+                        <div class="label-name">Label Type</div>
+                        <div class="label-value">
+                            {{ qr.block.get_structure_type_display }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Block Code</div>
+                        <div class="label-value">
+                            {{ qr.block.code }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Premise</div>
+                        <div class="label-value">
+                            {{ qr.block.premise.name }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Function</div>
+                        <div class="label-value">
+                            {{ qr.block.function|default:"-" }}
+                        </div>
+                    </div>
+
+
+                {% elif qr.premise %}
+
+                    <h2>{{ qr.premise.name }}</h2>
+
+                    <div class="label-row">
+                        <div class="label-name">Label Type</div>
+                        <div class="label-value">Premise</div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">DPA Number</div>
+                        <div class="label-value">
+                            {{ qr.premise.dpa_number|default:"-" }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Department</div>
+                        <div class="label-value">
+                            {{ qr.premise.department|default:"-" }}
+                        </div>
+                    </div>
+
+                    <div class="label-row">
+                        <div class="label-name">Location</div>
+                        <div class="label-value">
+                            {{ qr.premise.state|default:"-" }}
+                        </div>
+                    </div>
+
+
+                {% else %}
+
+                    <h2>Unlinked QR Code</h2>
+
+                    <div class="label-row">
+                        <div class="label-name">QR ID</div>
+                        <div class="label-value">
+                            {{ qr.qr_id }}
+                        </div>
+                    </div>
+
+                {% endif %}
+
+
+                <div class="label-row">
+                    <div class="label-name">QR Type</div>
+
+                    <div class="label-value">
+                        {{ qr.get_qr_type_display }}
+                    </div>
+                </div>
+
+                <div class="label-row">
+                    <div class="label-name">Status</div>
+
+                    <div class="label-value">
+                        {% if qr.is_active %}
+                            <span class="label-status">
+                                Active
+                            </span>
+                        {% else %}
+                            Inactive
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="label-footer">
+            Scan the QR code to access the latest registered asset
+            information. Do not remove or alter this label.
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

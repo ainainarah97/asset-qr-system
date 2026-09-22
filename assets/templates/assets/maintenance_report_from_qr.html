@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Report an Issue | AssetGuard
+    </title>
+
+
+    <style>
+
+        :root {
+            --primary: #0F8F87;
+            --primary-dark: #0B716B;
+            --primary-soft: #D9F2EF;
+
+            --surface: #ffffff;
+            --background: #f8fafc;
+
+            --border: #e2e8f0;
+
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+
+            --danger: #b91c1c;
+            --danger-soft: #fef2f2;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 20px;
+
+            background: var(--background);
+            color: var(--text-primary);
+
+            font-family: Arial, sans-serif;
+        }
+
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+
+            margin: 0 auto;
+        }
+
+
+        /* =========================================
+           HEADER
+           ========================================= */
+
+        .header {
+            padding: 26px;
+
+            background: var(--primary);
+            color: #ffffff;
+
+            border-radius: 14px 14px 0 0;
+
+            text-align: center;
+        }
+
+
+        .header h1 {
+            margin: 0 0 8px;
+
+            font-size: 26px;
+        }
+
+
+        .header p {
+            margin: 0;
+
+            opacity: 0.9;
+        }
+
+
+        /* =========================================
+           MAIN CARD
+           ========================================= */
+
+        .card {
+            padding: 26px;
+
+            background: var(--surface);
+
+            border-radius: 0 0 14px 14px;
+
+            box-shadow:
+                0 8px 24px
+                rgba(15, 143, 135, 0.12);
+        }
+
+
+        .section-title {
+            margin: 0 0 16px;
+
+            padding-bottom: 8px;
+
+            color: var(--primary-dark);
+
+            border-bottom:
+                2px solid var(--primary-soft);
+
+            font-size: 18px;
+        }
+
+
+        /* =========================================
+           SCANNED LOCATION
+           ========================================= */
+
+        .location-box {
+            margin-bottom: 28px;
+
+            padding: 18px;
+
+            background: #f8fafc;
+
+            border: 1px solid var(--border);
+
+            border-radius: 10px;
+        }
+
+
+        .location-row {
+            display: grid;
+
+            grid-template-columns:
+                150px 1fr;
+
+            gap: 12px;
+
+            padding: 9px 0;
+
+            border-bottom:
+                1px solid var(--border);
+        }
+
+
+        .location-row:last-child {
+            border-bottom: none;
+        }
+
+
+        .location-label {
+            color: var(--text-secondary);
+
+            font-weight: bold;
+        }
+
+
+        /* =========================================
+           FORM
+           ========================================= */
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #334155;
+
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+
+        .form-control,
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+
+            padding: 12px 13px;
+
+            background: #ffffff;
+            color: var(--text-primary);
+
+            border: 1px solid #cbd5e1;
+
+            border-radius: 9px;
+
+            font-family: inherit;
+            font-size: 15px;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .form-control:focus,
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 3px
+                var(--primary-soft);
+        }
+
+
+        textarea.form-control,
+        .form-group textarea {
+            min-height: 120px;
+
+            resize: vertical;
+        }
+
+
+        /* =========================================
+           ERRORS
+           ========================================= */
+
+        .form-error {
+            display: block;
+
+            margin-top: 6px;
+
+            color: var(--danger);
+
+            font-size: 13px;
+        }
+
+
+        .form-errors {
+            margin-bottom: 20px;
+
+            padding: 14px;
+
+            background: var(--danger-soft);
+            color: #991b1b;
+
+            border: 1px solid #fecaca;
+
+            border-radius: 8px;
+        }
+
+
+        /* =========================================
+           ACTION BUTTONS
+           ========================================= */
+
+        .actions {
+            display: flex;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-top: 28px;
+        }
+
+
+        .submit-button {
+            flex: 1;
+
+            min-width: 200px;
+
+            padding: 14px 20px;
+
+            background: var(--primary);
+            color: #ffffff;
+
+            border: none;
+            border-radius: 9px;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                background-color 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .submit-button:hover {
+            background: var(--primary-dark);
+
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 6px 16px
+                rgba(15, 143, 135, 0.18);
+        }
+
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+
+        .cancel-button {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-width: 120px;
+
+            padding: 14px 18px;
+
+            background: #ffffff;
+            color: var(--primary-dark);
+
+            border: 1px solid var(--primary);
+
+            border-radius: 9px;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            text-decoration: none;
+
+            transition:
+                background-color 0.2s ease;
+        }
+
+
+        .cancel-button:hover {
+            background: var(--primary-soft);
+        }
+
+
+        /* =========================================
+           HELP + FOOTER
+           ========================================= */
+
+        .help-text {
+            margin-top: 18px;
+
+            padding: 13px 15px;
+
+            background: #f8fafc;
+            color: var(--text-secondary);
+
+            border-left:
+                4px solid var(--primary);
+
+            border-radius: 6px;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        .footer {
+            margin-top: 20px;
+
+            color: var(--text-secondary);
+
+            text-align: center;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================================
+           MOBILE
+           ========================================= */
+
+        @media (max-width: 550px) {
+
+            body {
+                padding: 10px;
+            }
+
+
+            .header,
+            .card {
+                padding: 20px;
+            }
+
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+
+            .location-row {
+                grid-template-columns: 1fr;
+
+                gap: 3px;
+            }
+
+
+            .actions {
+                flex-direction: column;
+            }
+
+
+            .submit-button,
+            .cancel-button {
+                width: 100%;
+
+                min-width: 0;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<main class="container">
+
+
+    <!-- =========================================
+         HEADER
+         ========================================= -->
+
+    <header class="header">
+
+        <h1>
+            Report an Issue
+        </h1>
+
+        <p>
+            Maintenance & Complaints
+        </p>
+
+    </header>
+
+
+
+    <section class="card">
+
+
+        <!-- =========================================
+             SCANNED ASSET / LOCATION
+             ========================================= -->
+
+        <h2 class="section-title">
+            Scanned Asset / Location
+        </h2>
+
+
+        <div class="location-box">
+
+
+            <div class="location-row">
+
+                <div class="location-label">
+                    QR ID
+                </div>
+
+                <div>
+                    {{ qr.qr_id }}
+                </div>
+
+            </div>
+
+
+            <div class="location-row">
+
+                <div class="location-label">
+                    QR Type
+                </div>
+
+                <div>
+                    {{ qr.get_qr_type_display }}
+                </div>
+
+            </div>
+
+
+
+            {% if premise %}
+
+                <div class="location-row">
+
+                    <div class="location-label">
+                        Premise
+                    </div>
+
+                    <div>
+                        {{ premise.name }}
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+
+            {% if block %}
+
+                <div class="location-row">
+
+                    <div class="location-label">
+                        Block
+                    </div>
+
+                    <div>
+                        {{ block.code }}
+                        —
+                        {{ block.name }}
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+
+            {% if level %}
+
+                <div class="location-row">
+
+                    <div class="location-label">
+                        Level
+                    </div>
+
+                    <div>
+                        {{ level.code }}
+                        —
+                        {{ level.name }}
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+
+            {% if room %}
+
+                <div class="location-row">
+
+                    <div class="location-label">
+                        Room / Area
+                    </div>
+
+                    <div>
+                        {{ room.room_tag }}
+                        —
+                        {{ room.name }}
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+
+            {% if component %}
+
+                <div class="location-row">
+
+                    <div class="location-label">
+                        Component
+                    </div>
+
+                    <div>
+                        {{ component.component_id }}
+                        —
+                        {{ component.name }}
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+        </div>
+
+
+
+        <!-- =========================================
+             ISSUE INFORMATION
+             ========================================= -->
+
+        <h2 class="section-title">
+            Issue Information
+        </h2>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="form-errors">
+
+                    {% for error in form.non_field_errors %}
+
+                        <div>
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+
+            <!-- CATEGORY -->
+
+            <div class="form-group">
+
+                <label for="{{ form.category.id_for_label }}">
+                    Issue Category
+                </label>
+
+                {{ form.category }}
+
+                {% for error in form.category.errors %}
+
+                    <span class="form-error">
+                        {{ error }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label for="{{ form.description.id_for_label }}">
+                    Description
+                </label>
+
+                {{ form.description }}
+
+                {% for error in form.description.errors %}
+
+                    <span class="form-error">
+                        {{ error }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- PRIORITY -->
+
+            <div class="form-group">
+
+                <label for="{{ form.priority.id_for_label }}">
+                    Priority
+                </label>
+
+                {{ form.priority }}
+
+                {% for error in form.priority.errors %}
+
+                    <span class="form-error">
+                        {{ error }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- =====================================
+                 REPORTER INFORMATION
+                 ===================================== -->
+
+            <h2
+                class="section-title"
+                style="margin-top: 30px;"
+            >
+                Reporter Information
+            </h2>
+
+
+
+            <div class="form-group">
+
+                <label for="{{ form.reporter_name.id_for_label }}">
+                    Reporter Name
+                </label>
+
+                {{ form.reporter_name }}
+
+                {% for error in form.reporter_name.errors %}
+
+                    <span class="form-error">
+                        {{ error }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label for="{{ form.reporter_contact.id_for_label }}">
+                    Contact Number
+                </label>
+
+                {{ form.reporter_contact }}
+
+                {% for error in form.reporter_contact.errors %}
+
+                    <span class="form-error">
+                        {{ error }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- =====================================
+                 ACTIONS
+                 ===================================== -->
+
+            <div class="actions">
+
+                <a
+                    href="{% url 'assets:qr_scan' qr.public_id %}"
+                    class="cancel-button"
+                >
+                    ← Back
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="submit-button"
+                >
+                    Submit Maintenance Request
+                </button>
+
+            </div>
+
+
+        </form>
+
+
+        <div class="help-text">
+
+            The asset and location information above was identified
+            automatically from the QR code and will be attached to
+            this maintenance request.
+
+        </div>
+
+
+    </section>
+
+
+
+    <footer class="footer">
+
+        Government Immovable Asset Information System
+
+    </footer>
+
+
+</main>
+
+
+</body>
+
+</html>

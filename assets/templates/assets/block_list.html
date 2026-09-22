@@ -1,0 +1,680 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+Blocks | Asset QR System
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            Blocks and External Structures
+        </h2>
+
+        <p>
+            List of registered building blocks and external structures.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'assets:block_create' %}"
+        class="button"
+    >
+        Add Block / External Structure
+    </a>
+
+
+</div>
+
+
+
+
+<!-- SORT -->
+
+<form method="get">
+
+<select
+name="sort"
+class="form-control"
+onchange="this.form.submit()"
+>
+
+
+<option value="">
+Sort By
+</option>
+
+
+<option
+value="newest"
+{% if request.GET.sort == "newest" %}
+selected
+{% endif %}
+>
+Newest
+</option>
+
+
+<option
+value="oldest"
+{% if request.GET.sort == "oldest" %}
+selected
+{% endif %}
+>
+Oldest
+</option>
+
+
+<option
+value="name_a"
+{% if request.GET.sort == "name_a" %}
+selected
+{% endif %}
+>
+Name A-Z
+</option>
+
+
+<option
+value="name_z"
+{% if request.GET.sort == "name_z" %}
+selected
+{% endif %}
+>
+Name Z-A
+</option>
+
+
+</select>
+
+</form>
+
+
+
+
+
+<!-- FILTER -->
+
+<div class="filter-card">
+
+
+<form method="get">
+
+
+<div class="filter-grid">
+
+
+
+<!-- SEARCH -->
+
+<div class="filter-group">
+
+<label>
+Search
+</label>
+
+
+<input
+
+type="text"
+
+name="search"
+
+class="form-control"
+
+placeholder="Search block..."
+
+value="{{ request.GET.search|default:'' }}"
+
+>
+
+</div>
+
+
+
+
+
+<!-- PREMISE -->
+
+<div class="filter-group">
+
+<label>
+Premise
+</label>
+
+
+<select
+
+name="premise"
+
+class="form-control"
+
+>
+
+
+<option value="">
+All Premises
+</option>
+
+
+
+{% for premise in premises %}
+
+
+<option
+
+value="{{ premise }}"
+
+{% if request.GET.premise == premise %}
+selected
+{% endif %}
+
+>
+
+{{ premise }}
+
+</option>
+
+
+{% endfor %}
+
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+<!-- BLOCK NAME -->
+
+<div class="filter-group">
+
+<label>
+Block Name
+</label>
+
+
+<select
+
+name="block_name"
+
+class="form-control"
+
+>
+
+
+<option value="">
+All Blocks
+</option>
+
+
+
+{% for name in block_names %}
+
+
+<option
+
+value="{{ name }}"
+
+{% if request.GET.block_name == name %}
+selected
+{% endif %}
+
+>
+
+{{ name }}
+
+</option>
+
+
+{% endfor %}
+
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+<!-- STRUCTURE TYPE -->
+
+<div class="filter-group">
+
+<label>
+Structure Type
+</label>
+
+
+<select
+
+name="structure_type"
+
+class="form-control"
+
+>
+
+
+<option value="">
+All Types
+</option>
+
+
+
+{% for value,label in structure_types %}
+
+
+<option
+
+value="{{ value }}"
+
+{% if request.GET.structure_type == value %}
+selected
+{% endif %}
+
+>
+
+{{ label }}
+
+</option>
+
+
+{% endfor %}
+
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+<!-- STATUS -->
+
+<div class="filter-group">
+
+<label>
+Status
+</label>
+
+
+<select
+
+name="status"
+
+class="form-control"
+
+>
+
+
+<option value="">
+All Statuses
+</option>
+
+
+<option
+value="active"
+{% if request.GET.status == "active" %}
+selected
+{% endif %}
+>
+Active
+</option>
+
+
+<option
+value="inactive"
+{% if request.GET.status == "inactive" %}
+selected
+{% endif %}
+>
+Inactive
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+<div class="filter-actions">
+
+
+<button
+
+type="submit"
+
+class="button"
+
+>
+Filter
+</button>
+
+
+
+<a
+
+href="{% url 'assets:block_list' %}"
+
+class="button button-secondary"
+
+>
+Reset
+</a>
+
+
+</div>
+
+
+
+</form>
+
+
+</div>
+
+
+
+
+
+
+<!-- TABLE -->
+
+
+<div class="table-container">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>
+Code
+</th>
+
+
+<th>
+Name
+</th>
+
+
+<th>
+Premise
+</th>
+
+
+<th>
+Structure Type
+</th>
+
+
+<th>
+Security Level
+</th>
+
+
+<th>
+Function
+</th>
+
+
+<th>
+Status
+</th>
+
+
+<th>
+Action
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody>
+
+
+{% for block in blocks %}
+
+
+<tr>
+
+
+<td>
+
+<strong>
+{{ block.code }}
+</strong>
+
+</td>
+
+
+
+
+<td>
+
+<strong>
+{{ block.name }}
+</strong>
+
+</td>
+
+
+
+
+<td>
+
+{{ block.premise.name }}
+
+</td>
+
+
+
+
+<td>
+
+{{ block.get_structure_type_display }}
+
+</td>
+
+
+
+
+<td>
+
+
+{% if block.security_level == "public" %}
+
+<span class="badge badge-success">
+{{ block.get_security_level_display }}
+</span>
+
+
+{% elif block.security_level == "staff" %}
+
+<span class="badge badge-warning">
+{{ block.get_security_level_display }}
+</span>
+
+
+{% elif block.security_level == "restricted" %}
+
+<span class="badge badge-danger">
+{{ block.get_security_level_display }}
+</span>
+
+
+{% else %}
+
+<span class="badge">
+{{ block.get_security_level_display }}
+</span>
+
+
+{% endif %}
+
+
+</td>
+
+
+
+
+
+<td>
+
+{% if block.function %}
+
+{{ block.function }}
+
+{% else %}
+
+<span class="secondary-text">
+—
+</span>
+
+{% endif %}
+
+</td>
+
+
+
+
+
+<td>
+
+
+{% if block.status == "active" %}
+
+<span class="badge badge-success">
+{{ block.get_status_display }}
+</span>
+
+
+{% elif block.status == "inactive" %}
+
+<span class="badge badge-danger">
+{{ block.get_status_display }}
+</span>
+
+
+{% else %}
+
+<span class="badge">
+{{ block.get_status_display }}
+</span>
+
+
+{% endif %}
+
+
+</td>
+
+
+
+
+
+<td>
+
+
+<div class="action-buttons">
+
+
+<a
+
+href="{% url 'assets:block_qr_code' block.id %}"
+
+class="button button-small"
+
+target="_blank"
+
+>
+
+View QR
+
+</a>
+
+
+
+<a
+
+href="{% url 'assets:block_update' block.id %}"
+
+class="button button-small button-secondary"
+
+>
+
+Edit
+
+</a>
+
+
+</div>
+
+
+</td>
+
+
+
+</tr>
+
+
+{% empty %}
+
+
+<tr>
+
+<td colspan="8" class="empty-message">
+
+No blocks or external structures found.
+
+</td>
+
+</tr>
+
+
+{% endfor %}
+
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+
+{% endblock %}

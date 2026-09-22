@@ -1,0 +1,163 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+Reports & Handover | AssetGuard
+{% endblock %}
+
+
+{% block content %}
+
+<section class="dashboard-section">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="section-heading">
+
+        <h2>
+            {% trans "Reports & Handover" %}
+        </h2>
+
+        <p>
+            {% trans "Generate structured asset, maintenance and handover reports from registered system data." %}
+        </p>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         REPORT MODULES
+         ===================================================== -->
+
+    <div class="module-grid report-module-grid">
+
+
+        <!-- =================================================
+             01 ASSET REPORTS
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:asset_report' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                01
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Asset Reports" %}
+                </h3>
+
+                <p>
+                    {% trans "Generate reports for premises, blocks, levels, rooms and asset components." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+
+        <!-- =================================================
+             02 MAINTENANCE REPORTS
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:maintenance_report' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                02
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Maintenance Reports" %}
+                </h3>
+
+                <p>
+                    {% trans "Review maintenance requests, status, priorities and component maintenance history." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+
+        <!-- =================================================
+             03 HANDOVER RECORDS
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:handover_report' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                03
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Handover Records" %}
+                </h3>
+
+                <p>
+                    {% trans "Review handover readiness and generate complete premise handover documentation." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+    </div>
+
+
+</section>
+
+
+
+<style>
+
+.report-module-grid .module-card {
+    min-height: 150px;
+}
+
+
+.report-module-grid .module-content h3 {
+    margin-bottom: 7px;
+}
+
+
+.report-module-grid .module-content p {
+    line-height: 1.6;
+}
+
+</style>
+
+
+{% endblock %}

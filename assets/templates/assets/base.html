@@ -1,0 +1,630 @@
+{% load static i18n %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<!DOCTYPE html>
+<html lang="{{ CURRENT_LANGUAGE }}">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+            AssetGuard
+        {% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'assets/style.css' %}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-shell">
+
+
+    <!-- ==================================================
+         SIDEBAR
+         ================================================== -->
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+
+        <!-- ==================================================
+             SIDEBAR HEADER
+             ================================================== -->
+
+        <div class="sidebar-header">
+
+
+            <a
+                href="{% url 'assets:dashboard' %}"
+                class="sidebar-brand"
+            >
+
+                <div class="brand-logo">
+                    GA
+                </div>
+
+
+                <div class="brand-text">
+
+                    <strong>
+                        AssetGuard
+                    </strong>
+
+                    <span>
+                        Government Assets
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <button
+                type="button"
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                aria-label="Collapse sidebar"
+                title="Collapse sidebar"
+            >
+
+                <span class="toggle-icon">
+                    ☰
+                </span>
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- ==================================================
+             SIDEBAR NAVIGATION
+             ================================================== -->
+
+        <nav class="sidebar-nav">
+
+
+            {% with current_url=request.resolver_match.url_name %}
+
+
+                <!-- ==========================================
+                     DASHBOARD
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:dashboard' %}"
+                    class="sidebar-link
+                    {% if current_url == 'dashboard' %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'Dashboard' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        ⌂
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "Dashboard" %}
+                    </span>
+
+                </a>
+
+
+
+                <!-- ==========================================
+                     ASSET REGISTRY
+                     ========================================== -->
+
+                <div class="sidebar-section-title">
+                    {% trans "Asset Registry" %}
+                </div>
+
+
+
+                <!-- ==========================================
+                     MODULE 01
+                     PREMISES
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:premise_list' %}"
+                    class="sidebar-link
+                    {% if current_url and 'premise' in current_url %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'Premises' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        01
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "Premises" %}
+                    </span>
+
+                </a>
+
+
+
+                <!-- ==========================================
+                     MODULE 02
+                     BLOCKS & EXTERNAL STRUCTURES
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:block_list' %}"
+                    class="sidebar-link
+                    {% if current_url and 'block' in current_url %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'Blocks & External Structures' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        02
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "Blocks & External Structures" %}
+                    </span>
+
+                </a>
+
+
+
+                <!-- ==========================================
+                     MODULE 03
+                     LEVELS
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:level_list' %}"
+                    class="sidebar-link
+                    {% if current_url and 'level' in current_url %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'Levels' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        03
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "Levels" %}
+                    </span>
+
+                </a>
+
+
+
+                <!-- ==========================================
+                     MODULE 04
+                     ROOMS & OPEN AREAS
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:room_list' %}"
+                    class="sidebar-link
+                    {% if current_url and 'room' in current_url %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'Rooms & Open Areas' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        04
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "Rooms & Open Areas" %}
+                    </span>
+
+                </a>
+
+
+
+                <!-- ==========================================
+                     MODULE 05
+                     ASSET COMPONENTS
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:component_list' %}"
+                    class="sidebar-link
+                    {% if current_url and 'component' in current_url and current_url != 'asset_report' and current_url != 'asset_report_pdf' and current_url != 'maintenance_report' and current_url != 'maintenance_report_pdf' %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'Asset Components' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        05
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "Asset Components" %}
+                    </span>
+
+                </a>
+
+
+
+                <!-- ==========================================
+                     MODULE 06
+                     QR & ASSET LABELS
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:qr_code_list' %}"
+                    class="sidebar-link
+                    {% if current_url and 'qr' in current_url %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'QR & Asset Labels' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        06
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "QR & Asset Labels" %}
+                    </span>
+
+                </a>
+
+
+
+                <!-- ==========================================
+                     MODULE 07
+                     DRAWINGS & DOCUMENTS
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:drawing_list' %}"
+                    class="sidebar-link
+                    {% if current_url and 'drawing' in current_url or current_url and 'asset_document' in current_url %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'Drawings & Documents' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        07
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "Drawings & Documents" %}
+                    </span>
+
+                </a>
+
+
+
+                <!-- ==========================================
+                     MODULE 08
+                     MAINTENANCE & COMPLAINTS
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:maintenance_dashboard' %}"
+                    class="sidebar-link
+                    {% if current_url and 'maintenance' in current_url and current_url != 'maintenance_report' and current_url != 'maintenance_report_pdf' %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'Maintenance & Complaints' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        08
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "Maintenance & Complaints" %}
+                    </span>
+
+                </a>
+
+
+
+                <!-- ==========================================
+                     MODULE 09
+                     REPORTS & HANDOVER
+                     ========================================== -->
+
+                <a
+                    href="{% url 'assets:reports_dashboard' %}"
+                    class="sidebar-link
+                    {% if current_url == 'reports_dashboard' or current_url == 'asset_report' or current_url == 'asset_report_pdf' or current_url == 'maintenance_report' or current_url == 'maintenance_report_pdf' or current_url == 'handover_report' or current_url == 'handover_report_pdf' %}
+                        active
+                    {% endif %}"
+                    title="{% trans 'Reports & Handover' %}"
+                >
+
+                    <span class="sidebar-icon">
+                        09
+                    </span>
+
+                    <span class="sidebar-label">
+                        {% trans "Reports & Handover" %}
+                    </span>
+
+                </a>
+
+
+            {% endwith %}
+
+
+        </nav>
+
+
+    </aside>
+
+
+
+    <!-- ==================================================
+         MAIN AREA
+         ================================================== -->
+
+    <div class="app-main">
+
+
+        <!-- ==================================================
+             TOPBAR
+             ================================================== -->
+
+        <header class="topbar">
+
+
+            <div class="topbar-heading">
+
+                <h1>
+                    {% trans "Government Asset Information System" %}
+                </h1>
+
+                <p>
+                    {% trans "Asset registry and QR management" %}
+                </p>
+
+            </div>
+
+
+
+            <div class="topbar-actions">
+
+
+                <!-- ==========================================
+                     LANGUAGE
+                     ========================================== -->
+
+                <form
+                    action="{% url 'set_language' %}"
+                    method="post"
+                    class="language-form"
+                >
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="next"
+                        value="{{ request.get_full_path }}"
+                    >
+
+
+                    <select
+                        name="language"
+                        class="language-select"
+                        onchange="this.form.submit()"
+                        aria-label="{% trans 'Select language' %}"
+                    >
+
+                        {% get_available_languages as AVAILABLE_LANGUAGES %}
+
+                        {% for language_code, language_name in AVAILABLE_LANGUAGES %}
+
+                            <option
+                                value="{{ language_code }}"
+                                {% if language_code == CURRENT_LANGUAGE %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ language_name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </form>
+
+
+
+                <!-- ==========================================
+                     USER
+                     ========================================== -->
+
+                <div
+                    class="user-avatar"
+                    title="{{ request.user.username|default:'Administrator' }}"
+                >
+
+                    {% if request.user.is_authenticated %}
+
+                        {{ request.user.username|first|upper }}
+
+                    {% else %}
+
+                        A
+
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- ==================================================
+             PAGE CONTENT
+             ================================================== -->
+
+        <main class="content-area">
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==================================================
+     SIDEBAR SCRIPT
+     ================================================== -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const sidebarToggle =
+                document.getElementById(
+                    "sidebarToggle"
+                );
+
+
+            const savedState =
+                localStorage.getItem(
+                    "assetSidebarCollapsed"
+                );
+
+
+            /*
+             * Restore collapsed state
+             */
+
+            if (savedState === "true") {
+
+                document.body.classList.add(
+                    "sidebar-collapsed"
+                );
+
+            }
+
+
+
+            /*
+             * Update accessibility text
+             */
+
+            function updateToggleText() {
+
+                const isCollapsed =
+                    document.body.classList.contains(
+                        "sidebar-collapsed"
+                    );
+
+
+                if (!sidebarToggle) {
+
+                    return;
+
+                }
+
+
+                sidebarToggle.setAttribute(
+                    "aria-label",
+                    isCollapsed
+                        ? "Expand sidebar"
+                        : "Collapse sidebar"
+                );
+
+
+                sidebarToggle.setAttribute(
+                    "title",
+                    isCollapsed
+                        ? "Expand sidebar"
+                        : "Collapse sidebar"
+                );
+
+            }
+
+
+
+            updateToggleText();
+
+
+
+            /*
+             * Toggle sidebar
+             */
+
+            if (sidebarToggle) {
+
+                sidebarToggle.addEventListener(
+                    "click",
+                    function () {
+
+                        document.body.classList.toggle(
+                            "sidebar-collapsed"
+                        );
+
+
+                        const isCollapsed =
+                            document.body.classList.contains(
+                                "sidebar-collapsed"
+                            );
+
+
+                        localStorage.setItem(
+                            "assetSidebarCollapsed",
+                            isCollapsed
+                        );
+
+
+                        updateToggleText();
+
+                    }
+                );
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

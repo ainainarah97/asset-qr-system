@@ -1,0 +1,1381 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+Asset Reports | AssetGuard
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            Asset Reports
+        </h2>
+
+        <p>
+            Generate filtered reports for premises, blocks, levels,
+            rooms, open areas and asset components.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     FILTERS
+     ========================================================= -->
+
+<form method="get" class="m09-filter-card">
+
+
+    <!-- REPORT TYPE -->
+
+    <div class="m09-filter-field">
+
+        <label>
+            Report Type
+        </label>
+
+        <select
+            name="report_type"
+            id="report-type"
+        >
+
+            {% for value, label in report_types %}
+
+                <option
+                    value="{{ value }}"
+                    {% if report_type == value %}
+                        selected
+                    {% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <!-- SEARCH -->
+
+    <div class="m09-filter-field">
+
+        <label>
+            Search
+        </label>
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search report records..."
+        >
+
+    </div>
+
+
+    <!-- PREMISE -->
+
+    <div
+        class="m09-filter-field"
+        id="premise-filter"
+    >
+
+        <label>
+            Premise
+        </label>
+
+        <select name="premise">
+
+            <option value="">
+                All Premises
+            </option>
+
+            {% for premise in premises %}
+
+                <option
+                    value="{{ premise.id }}"
+                    {% if premise_selected == premise.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ premise.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <!-- BLOCK -->
+
+    <div
+        class="m09-filter-field"
+        id="block-filter"
+    >
+
+        <label>
+            Block
+        </label>
+
+        <select name="block">
+
+            <option value="">
+                All Blocks
+            </option>
+
+            {% for block in blocks %}
+
+                <option
+                    value="{{ block.id }}"
+                    {% if block_selected == block.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ block.code }} - {{ block.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <!-- LEVEL -->
+
+    <div
+        class="m09-filter-field"
+        id="level-filter"
+    >
+
+        <label>
+            Level
+        </label>
+
+        <select name="level">
+
+            <option value="">
+                All Levels
+            </option>
+
+            {% for level in levels %}
+
+                <option
+                    value="{{ level.id }}"
+                    {% if level_selected == level.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ level.block.code }}.{{ level.code }}
+                    - {{ level.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <!-- ROOM -->
+
+    <div
+        class="m09-filter-field"
+        id="room-filter"
+    >
+
+        <label>
+            Room / Area
+        </label>
+
+        <select name="room">
+
+            <option value="">
+                All Rooms / Areas
+            </option>
+
+            {% for room in rooms %}
+
+                <option
+                    value="{{ room.id }}"
+                    {% if room_selected == room.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ room.room_tag }} - {{ room.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div
+        class="m09-filter-field"
+        id="status-filter"
+    >
+
+        <label>
+            Status
+        </label>
+
+        <select name="status">
+
+            <option value="">
+                All Statuses
+            </option>
+
+            {% for value, label in statuses %}
+
+                <option
+                    value="{{ value }}"
+                    {% if status_selected == value %}
+                        selected
+                    {% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <div class="m09-actions">
+
+        <button
+            type="submit"
+            class="m09-primary-btn"
+        >
+            Filter
+        </button>
+
+        <a
+            href="{% url 'assets:asset_report' %}"
+            class="m09-secondary-btn"
+        >
+            Reset
+        </a>
+
+    </div>
+
+
+</form>
+
+
+<!-- =========================================================
+     TOOLBAR
+     ========================================================= -->
+
+<div class="m09-toolbar">
+
+    <div>
+
+        <strong>
+            {{ report_items|length }}
+        </strong>
+
+        record(s) found.
+
+    </div>
+
+
+    <a
+        href="{% url 'assets:asset_report_pdf' %}?{{ request.GET.urlencode }}"
+        class="m09-export-btn"
+    >
+        Export PDF
+    </a>
+
+</div>
+
+
+<!-- =========================================================
+     COMPONENT REPORT
+     ========================================================= -->
+
+{% if report_type == "component" %}
+
+<h3 class="m09-report-heading">
+    Asset Component Register
+</h3>
+
+<div class="m09-table-wrapper">
+
+<table class="m09-table">
+
+    <thead>
+
+        <tr>
+
+            <th>No.</th>
+            <th>Component ID</th>
+            <th>Component</th>
+            <th>Location</th>
+            <th>Discipline</th>
+            <th>System</th>
+            <th>Brand / Model</th>
+            <th>Status</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for component in report_items %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ component.component_id }}
+                </strong>
+
+                {% if component.component_code %}
+
+                    <div class="secondary-text">
+                        {{ component.component_code }}
+                    </div>
+
+                {% endif %}
+
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ component.name }}
+                </strong>
+
+            </td>
+
+
+            <td class="m09-location">
+
+                <strong>
+                    {{ component.room.level.block.premise.name }}
+                </strong>
+
+                <div class="secondary-text">
+                    {{ component.room.level.block.code }}
+                    -
+                    {{ component.room.level.block.name }}
+                </div>
+
+                <div class="secondary-text">
+                    {{ component.room.level.code }}
+                    -
+                    {{ component.room.level.name }}
+                </div>
+
+                <div class="secondary-text">
+                    {{ component.room.room_tag }}
+                    -
+                    {{ component.room.name }}
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <span class="m09-badge m09-badge-info">
+                    {{ component.get_discipline_display }}
+                </span>
+
+            </td>
+
+
+            <td>
+
+                {{ component.system|default:"-" }}
+
+                {% if component.subsystem %}
+
+                    <div class="secondary-text">
+                        {{ component.subsystem }}
+                    </div>
+
+                {% endif %}
+
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ component.brand|default:"-" }}
+                </strong>
+
+                {% if component.model %}
+
+                    <div class="secondary-text">
+                        {{ component.model }}
+                    </div>
+
+                {% endif %}
+
+            </td>
+
+
+            <td>
+
+                <span class="m09-badge m09-badge-default">
+                    {{ component.get_status_display }}
+                </span>
+
+            </td>
+
+        </tr>
+
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="8" class="m09-empty">
+                No components match the selected filters.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+
+<!-- =========================================================
+     ROOM REPORT
+     ========================================================= -->
+
+{% elif report_type == "room" %}
+
+<h3 class="m09-report-heading">
+    Room & Open Area Register
+</h3>
+
+<div class="m09-table-wrapper">
+
+<table class="m09-table">
+
+    <thead>
+
+        <tr>
+
+            <th>No.</th>
+            <th>Room Tag</th>
+            <th>Room / Area</th>
+            <th>Location</th>
+            <th>Space Type</th>
+            <th>Function</th>
+            <th>Area</th>
+            <th>Security</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for room in report_items %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ room.room_tag }}
+                </strong>
+
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ room.name }}
+                </strong>
+
+            </td>
+
+
+            <td class="m09-location">
+
+                <strong>
+                    {{ room.level.block.premise.name }}
+                </strong>
+
+                <div class="secondary-text">
+                    {{ room.level.block.code }}
+                    -
+                    {{ room.level.block.name }}
+                </div>
+
+                <div class="secondary-text">
+                    {{ room.level.code }}
+                    -
+                    {{ room.level.name }}
+                </div>
+
+            </td>
+
+
+            <td>
+                {{ room.get_space_type_display }}
+            </td>
+
+
+            <td>
+                {{ room.function_name|default:"-" }}
+            </td>
+
+
+            <td>
+                {{ room.area|default:"-" }}
+            </td>
+
+
+            <td>
+
+                <span class="m09-badge m09-badge-info">
+                    {{ room.get_security_level_display }}
+                </span>
+
+            </td>
+
+        </tr>
+
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="8" class="m09-empty">
+                No rooms or open areas match the selected filters.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+
+<!-- =========================================================
+     LEVEL REPORT
+     ========================================================= -->
+
+{% elif report_type == "level" %}
+
+<h3 class="m09-report-heading">
+    Level Register
+</h3>
+
+<div class="m09-table-wrapper">
+
+<table class="m09-table">
+
+    <thead>
+
+        <tr>
+
+            <th>No.</th>
+            <th>Level Code</th>
+            <th>Level Name</th>
+            <th>Block</th>
+            <th>Premise</th>
+            <th>Sequence</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for level in report_items %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ level.code }}
+                </strong>
+
+            </td>
+
+
+            <td>
+                {{ level.name }}
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ level.block.code }}
+                </strong>
+
+                <div class="secondary-text">
+                    {{ level.block.name }}
+                </div>
+
+            </td>
+
+
+            <td>
+                {{ level.block.premise.name }}
+            </td>
+
+
+            <td>
+                {{ level.sequence }}
+            </td>
+
+        </tr>
+
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="6" class="m09-empty">
+                No levels match the selected filters.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+
+<!-- =========================================================
+     BLOCK REPORT
+     ========================================================= -->
+
+{% elif report_type == "block" %}
+
+<h3 class="m09-report-heading">
+    Block & External Structure Register
+</h3>
+
+<div class="m09-table-wrapper">
+
+<table class="m09-table">
+
+    <thead>
+
+        <tr>
+
+            <th>No.</th>
+            <th>Block Code</th>
+            <th>Name</th>
+            <th>Premise</th>
+            <th>Structure Type</th>
+            <th>Function</th>
+            <th>Security</th>
+            <th>Status</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for block in report_items %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ block.code }}
+                </strong>
+
+            </td>
+
+
+            <td>
+                {{ block.name }}
+            </td>
+
+
+            <td>
+                {{ block.premise.name }}
+            </td>
+
+
+            <td>
+                {{ block.get_structure_type_display }}
+            </td>
+
+
+            <td>
+                {{ block.function|default:"-" }}
+            </td>
+
+
+            <td>
+
+                <span class="m09-badge m09-badge-info">
+                    {{ block.get_security_level_display }}
+                </span>
+
+            </td>
+
+
+            <td>
+
+                <span class="m09-badge m09-badge-default">
+                    {{ block.get_status_display }}
+                </span>
+
+            </td>
+
+        </tr>
+
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="8" class="m09-empty">
+                No blocks or external structures match the selected filters.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+
+<!-- =========================================================
+     PREMISE REPORT
+     ========================================================= -->
+
+{% elif report_type == "premise" %}
+
+<h3 class="m09-report-heading">
+    Premise Register
+</h3>
+
+<div class="m09-table-wrapper">
+
+<table class="m09-table">
+
+    <thead>
+
+        <tr>
+
+            <th>No.</th>
+            <th>Premise</th>
+            <th>DPA</th>
+            <th>Ministry</th>
+            <th>Department</th>
+            <th>State</th>
+            <th>Address</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for premise in report_items %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ premise.name }}
+                </strong>
+
+            </td>
+
+
+            <td>
+                {{ premise.dpa|default:"-" }}
+            </td>
+
+
+            <td>
+                {{ premise.ministry|default:"-" }}
+            </td>
+
+
+            <td>
+                {{ premise.department|default:"-" }}
+            </td>
+
+
+            <td>
+                {{ premise.state|default:"-" }}
+            </td>
+
+
+            <td>
+                {{ premise.address|default:"-" }}
+            </td>
+
+        </tr>
+
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="7" class="m09-empty">
+                No premises match the selected filters.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- =========================================================
+     MODULE 09 CONSISTENT STYLE
+     ========================================================= -->
+
+<style>
+
+.m09-filter-card {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+
+    padding: 22px;
+    margin-bottom: 28px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+}
+
+
+.m09-filter-field {
+    min-width: 0;
+}
+
+
+.m09-filter-field label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+.m09-filter-field input,
+.m09-filter-field select {
+    width: 100%;
+    height: 44px;
+
+    padding: 9px 12px;
+
+    background: #ffffff;
+    color: #0f172a;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+}
+
+
+.m09-filter-field input:focus,
+.m09-filter-field select:focus {
+    outline: none;
+
+    border-color: #0F8F87;
+
+    box-shadow: 0 0 0 3px #D9F2EF;
+}
+
+
+/* ACTION ROW */
+
+.m09-actions {
+    grid-column: 1 / -1 !important;
+
+    display: grid !important;
+    grid-template-columns: 120px 120px !important;
+
+    justify-content: end !important;
+
+    gap: 10px !important;
+
+    width: 100% !important;
+
+    margin-top: 2px !important;
+}
+
+
+.m09-primary-btn,
+.m09-secondary-btn {
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+
+    height: 44px !important;
+
+    margin: 0 !important;
+    padding: 0 16px !important;
+
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 9px !important;
+
+    font-family: inherit;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-decoration: none !important;
+}
+
+
+.m09-primary-btn {
+    background: #0F8F87 !important;
+    color: #ffffff !important;
+
+    border: 1px solid #0F8F87 !important;
+
+    cursor: pointer;
+}
+
+
+.m09-primary-btn:hover {
+    background: #0B716B !important;
+}
+
+
+.m09-secondary-btn {
+    background: #ffffff !important;
+    color: #0f172a !important;
+
+    border: 1px solid #cbd5e1 !important;
+}
+
+
+.m09-secondary-btn:hover {
+    background: #f8fafc !important;
+}
+
+
+/* TOOLBAR */
+
+.m09-toolbar {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 18px;
+}
+
+
+.m09-export-btn {
+    min-width: 145px;
+    height: 44px;
+
+    padding: 0 20px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #0F8F87;
+    color: #ffffff;
+
+    border: 1px solid #0F8F87;
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+
+.m09-export-btn:hover {
+    background: #0B716B;
+}
+
+
+.m09-report-heading {
+    margin: 0 0 12px;
+
+    color: #0B716B;
+
+    font-size: 18px;
+}
+
+
+/* TABLE */
+
+.m09-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+}
+
+
+.m09-table {
+    width: 100%;
+
+    min-width: 1000px;
+
+    border-collapse: collapse;
+}
+
+
+.m09-table thead {
+    background: #eaf7f5;
+}
+
+
+.m09-table th {
+    padding: 17px 16px;
+
+    color: #08766f;
+
+    border-bottom: 1px solid #dce7e9;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+
+.m09-table td {
+    padding: 18px 16px;
+
+    color: #1e293b;
+
+    border-bottom: 1px solid #eef2f4;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    vertical-align: middle;
+}
+
+
+.m09-table tbody tr:hover {
+    background: #f8fcfb;
+}
+
+
+.m09-location {
+    min-width: 230px;
+}
+
+
+.m09-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 11px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.m09-badge-info {
+    background: #D9F2EF;
+    color: #08766f;
+}
+
+
+.m09-badge-default {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+
+.m09-empty {
+    padding: 36px !important;
+
+    color: #64748b !important;
+
+    text-align: center;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+
+    .m09-filter-card {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .m09-filter-card {
+        grid-template-columns: 1fr;
+    }
+
+
+    .m09-actions {
+        grid-template-columns: 1fr 1fr !important;
+    }
+
+
+    .m09-primary-btn,
+    .m09-secondary-btn {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+
+
+    .m09-toolbar {
+        align-items: stretch;
+
+        flex-direction: column;
+    }
+
+
+    .m09-export-btn {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+
+
+<!-- =========================================================
+     FILTER VISIBILITY
+     ========================================================= -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const reportType =
+            document.getElementById("report-type");
+
+        const premiseFilter =
+            document.getElementById("premise-filter");
+
+        const blockFilter =
+            document.getElementById("block-filter");
+
+        const levelFilter =
+            document.getElementById("level-filter");
+
+        const roomFilter =
+            document.getElementById("room-filter");
+
+        const statusFilter =
+            document.getElementById("status-filter");
+
+
+        function setFilterVisibility(
+            element,
+            visible
+        ) {
+
+            if (!element) {
+                return;
+            }
+
+            element.style.display =
+                visible
+                    ? "block"
+                    : "none";
+
+
+            const select =
+                element.querySelector(
+                    "select"
+                );
+
+
+            if (select) {
+                select.disabled =
+                    !visible;
+            }
+
+        }
+
+
+        function updateFilters() {
+
+            const type =
+                reportType.value;
+
+
+            setFilterVisibility(
+                premiseFilter,
+                true
+            );
+
+
+            setFilterVisibility(
+                blockFilter,
+                type === "component" ||
+                type === "room" ||
+                type === "level"
+            );
+
+
+            setFilterVisibility(
+                levelFilter,
+                type === "component" ||
+                type === "room"
+            );
+
+
+            setFilterVisibility(
+                roomFilter,
+                type === "component"
+            );
+
+
+            setFilterVisibility(
+                statusFilter,
+                type === "component" ||
+                type === "block"
+            );
+
+        }
+
+
+        reportType.addEventListener(
+            "change",
+            updateFilters
+        );
+
+
+        updateFilters();
+
+    }
+);
+
+</script>
+
+
+{% endblock %}

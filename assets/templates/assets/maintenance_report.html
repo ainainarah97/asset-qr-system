@@ -1,0 +1,1246 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+Maintenance Reports | AssetGuard
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            Maintenance Reports
+        </h2>
+
+        <p>
+            Generate maintenance request, status and component
+            maintenance history reports.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     FILTERS
+     ========================================================= -->
+
+<form method="get" class="m09-filter-card">
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Report Type
+        </label>
+
+        <select
+            name="report_type"
+            id="report-type"
+        >
+
+            {% for value, label in report_types %}
+
+                <option
+                    value="{{ value }}"
+                    {% if report_type == value %}
+                        selected
+                    {% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Search
+        </label>
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Request no., issue, reporter..."
+        >
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Premise
+        </label>
+
+        <select name="premise">
+
+            <option value="">
+                All Premises
+            </option>
+
+            {% for premise in premises %}
+
+                <option
+                    value="{{ premise.id }}"
+                    {% if premise_selected == premise.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ premise.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Block
+        </label>
+
+        <select name="block">
+
+            <option value="">
+                All Blocks
+            </option>
+
+            {% for block in blocks %}
+
+                <option
+                    value="{{ block.id }}"
+                    {% if block_selected == block.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ block.code }} - {{ block.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Level
+        </label>
+
+        <select name="level">
+
+            <option value="">
+                All Levels
+            </option>
+
+            {% for level in levels %}
+
+                <option
+                    value="{{ level.id }}"
+                    {% if level_selected == level.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ level.block.code }}.{{ level.code }}
+                    - {{ level.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Room / Area
+        </label>
+
+        <select name="room">
+
+            <option value="">
+                All Rooms / Areas
+            </option>
+
+            {% for room in rooms %}
+
+                <option
+                    value="{{ room.id }}"
+                    {% if room_selected == room.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ room.room_tag }} - {{ room.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Component
+        </label>
+
+        <select name="component">
+
+            <option value="">
+                All Components
+            </option>
+
+            {% for component in components %}
+
+                <option
+                    value="{{ component.id }}"
+                    {% if component_selected == component.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ component.component_id }}
+                    - {{ component.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Category
+        </label>
+
+        <select name="category">
+
+            <option value="">
+                All Categories
+            </option>
+
+            {% for value, label in categories %}
+
+                <option
+                    value="{{ value }}"
+                    {% if category_selected == value %}
+                        selected
+                    {% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Priority
+        </label>
+
+        <select name="priority">
+
+            <option value="">
+                All Priorities
+            </option>
+
+            {% for value, label in priorities %}
+
+                <option
+                    value="{{ value }}"
+                    {% if priority_selected == value %}
+                        selected
+                    {% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Status
+        </label>
+
+        <select name="status">
+
+            <option value="">
+                All Statuses
+            </option>
+
+            {% for value, label in statuses %}
+
+                <option
+                    value="{{ value }}"
+                    {% if status_selected == value %}
+                        selected
+                    {% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Date From
+        </label>
+
+        <input
+            type="date"
+            name="date_from"
+            value="{{ date_from }}"
+        >
+
+    </div>
+
+
+    <div class="m09-filter-field">
+
+        <label>
+            Date To
+        </label>
+
+        <input
+            type="date"
+            name="date_to"
+            value="{{ date_to }}"
+        >
+
+    </div>
+
+
+    <!-- IMPORTANT:
+         BOTH BUTTONS ARE INSIDE ONE GRID CELL -->
+
+    <div class="m09-actions">
+
+        <button
+            type="submit"
+            class="m09-primary-btn"
+        >
+            Filter
+        </button>
+
+        <a
+            href="{% url 'assets:maintenance_report' %}"
+            class="m09-secondary-btn"
+        >
+            Reset
+        </a>
+
+    </div>
+
+
+</form>
+
+
+
+<!-- =========================================================
+     COMPONENT HISTORY SUMMARY
+     ========================================================= -->
+
+{% if report_type == "component_history" %}
+
+    {% if selected_component %}
+
+        <div class="component-summary">
+
+            <span class="summary-label">
+                Selected Component
+            </span>
+
+            <h3>
+                {{ selected_component.component_id }}
+                -
+                {{ selected_component.name }}
+            </h3>
+
+
+            <div class="component-summary-grid">
+
+
+                <div class="summary-item">
+
+                    <span>
+                        Premise
+                    </span>
+
+                    <strong>
+                        {{ selected_component.room.level.block.premise.name }}
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>
+                        Block
+                    </span>
+
+                    <strong>
+                        {{ selected_component.room.level.block.code }}
+                        -
+                        {{ selected_component.room.level.block.name }}
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>
+                        Level
+                    </span>
+
+                    <strong>
+                        {{ selected_component.room.level.code }}
+                        -
+                        {{ selected_component.room.level.name }}
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>
+                        Room / Area
+                    </span>
+
+                    <strong>
+                        {{ selected_component.room.room_tag }}
+                        -
+                        {{ selected_component.room.name }}
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+        <div class="component-required">
+
+            Select a component and click
+            <strong>Filter</strong>
+            to view its maintenance history.
+
+        </div>
+
+    {% endif %}
+
+{% endif %}
+
+
+
+<!-- =========================================================
+     TOOLBAR
+     ========================================================= -->
+
+<div class="m09-toolbar">
+
+    <div>
+
+        <strong>
+            {{ maintenance_requests|length }}
+        </strong>
+
+        maintenance record(s) found.
+
+    </div>
+
+
+    <a
+        href="{% url 'assets:maintenance_report_pdf' %}?{{ request.GET.urlencode }}"
+        class="m09-export-btn"
+    >
+        Export PDF
+    </a>
+
+</div>
+
+
+
+<h3 class="m09-report-heading">
+
+    {% if report_type == "component_history" %}
+
+        Component Maintenance History
+
+    {% elif report_type == "status_report" %}
+
+        Maintenance Status Report
+
+    {% else %}
+
+        Maintenance Request Register
+
+    {% endif %}
+
+</h3>
+
+
+
+<!-- =========================================================
+     TABLE
+     ========================================================= -->
+
+<div class="m09-table-wrapper">
+
+<table class="m09-table maintenance-report-table">
+
+    <thead>
+
+        <tr>
+
+            <th>No.</th>
+            <th>Request No.</th>
+            <th>Asset / Location</th>
+            <th>Issue</th>
+            <th>Category</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Assigned To</th>
+            <th>Reported</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for maintenance in maintenance_requests %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+
+            <td>
+
+                <strong>
+                    {{ maintenance.request_no }}
+                </strong>
+
+            </td>
+
+
+            <td class="m09-location">
+
+                {% if maintenance.component %}
+
+                    <strong>
+                        {{ maintenance.component.component_id }}
+                        -
+                        {{ maintenance.component.name }}
+                    </strong>
+
+                {% elif maintenance.room %}
+
+                    <strong>
+                        {{ maintenance.room.room_tag }}
+                        -
+                        {{ maintenance.room.name }}
+                    </strong>
+
+                {% elif maintenance.level %}
+
+                    <strong>
+                        {{ maintenance.level.code }}
+                        -
+                        {{ maintenance.level.name }}
+                    </strong>
+
+                {% elif maintenance.block %}
+
+                    <strong>
+                        {{ maintenance.block.code }}
+                        -
+                        {{ maintenance.block.name }}
+                    </strong>
+
+                {% else %}
+
+                    <strong>
+                        {{ maintenance.premise.name }}
+                    </strong>
+
+                {% endif %}
+
+
+                {% if maintenance.component %}
+
+                    <div class="secondary-text">
+                        {{ maintenance.premise.name }}
+                    </div>
+
+                    {% if maintenance.block %}
+
+                        <div class="secondary-text">
+                            {{ maintenance.block.code }}
+                            -
+                            {{ maintenance.block.name }}
+                        </div>
+
+                    {% endif %}
+
+                    {% if maintenance.level %}
+
+                        <div class="secondary-text">
+                            {{ maintenance.level.code }}
+                            -
+                            {{ maintenance.level.name }}
+                        </div>
+
+                    {% endif %}
+
+                    {% if maintenance.room %}
+
+                        <div class="secondary-text">
+                            {{ maintenance.room.room_tag }}
+                            -
+                            {{ maintenance.room.name }}
+                        </div>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </td>
+
+
+            <td class="maintenance-issue">
+                {{ maintenance.description }}
+            </td>
+
+
+            <td>
+                {{ maintenance.get_category_display }}
+            </td>
+
+
+            <td>
+
+                {% if maintenance.priority == "critical" %}
+
+                    <span
+                        class="m09-badge"
+                        style="
+                            background: #fee2e2 !important;
+                            color: #991b1b !important;
+                        "
+                    >
+                        {{ maintenance.get_priority_display }}
+                    </span>
+
+
+                {% elif maintenance.priority == "high" %}
+
+                    <span
+                        class="m09-badge"
+                        style="
+                            background: #ffedd5 !important;
+                            color: #9a3412 !important;
+                        "
+                    >
+                        {{ maintenance.get_priority_display }}
+                    </span>
+
+
+                {% elif maintenance.priority == "medium" %}
+
+                    <span
+                        class="m09-badge"
+                        style="
+                            background: #fef3c7 !important;
+                            color: #92400e !important;
+                        "
+                    >
+                        {{ maintenance.get_priority_display }}
+                    </span>
+
+
+                {% else %}
+
+                    <span
+                        class="m09-badge"
+                        style="
+                            background: #D9F2EF !important;
+                            color: #08766f !important;
+                        "
+                    >
+                        {{ maintenance.get_priority_display }}
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+            <td>
+
+                <span class="m09-badge m09-badge-info">
+                    {{ maintenance.get_status_display }}
+                </span>
+
+            </td>
+
+
+            <td>
+
+                {% if maintenance.assigned_to %}
+
+                    {{ maintenance.assigned_to.get_full_name|default:maintenance.assigned_to.username }}
+
+                {% else %}
+
+                    <span class="secondary-text">
+                        Not Assigned
+                    </span>
+
+                {% endif %}
+
+            </td>
+
+
+            <td>
+
+                {{ maintenance.created_at|date:"d M Y" }}
+
+                <div class="secondary-text">
+                    {{ maintenance.created_at|time:"g:i A" }}
+                </div>
+
+            </td>
+
+        </tr>
+
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="9" class="m09-empty">
+
+                {% if report_type == "component_history" and not selected_component %}
+
+                    Select a component to view its maintenance history.
+
+                {% else %}
+
+                    No maintenance records match the selected filters.
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+
+<style>
+
+/* SAME MODULE 09 FILTER SYSTEM */
+
+.m09-filter-card {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+
+    padding: 22px;
+    margin-bottom: 28px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+}
+
+
+.m09-filter-field {
+    min-width: 0;
+}
+
+
+.m09-filter-field label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+.m09-filter-field input,
+.m09-filter-field select {
+    width: 100%;
+    height: 44px;
+
+    padding: 9px 12px;
+
+    background: #ffffff;
+    color: #0f172a;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+}
+
+
+.m09-filter-field input:focus,
+.m09-filter-field select:focus {
+    outline: none;
+
+    border-color: #0F8F87;
+
+    box-shadow: 0 0 0 3px #D9F2EF;
+}
+
+
+/* THIS FORCES FILTER + RESET TOGETHER */
+
+.m09-actions {
+    grid-column: 1 / -1 !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+        120px 120px !important;
+
+    justify-content: end !important;
+
+    gap: 10px !important;
+
+    width: 100% !important;
+}
+
+
+.m09-primary-btn,
+.m09-secondary-btn {
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+
+    height: 44px !important;
+
+    margin: 0 !important;
+
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-decoration: none !important;
+}
+
+
+.m09-primary-btn {
+    background: #0F8F87 !important;
+    color: #ffffff !important;
+
+    border: 1px solid #0F8F87 !important;
+
+    cursor: pointer;
+}
+
+
+.m09-primary-btn:hover {
+    background: #0B716B !important;
+}
+
+
+.m09-secondary-btn {
+    background: #ffffff !important;
+    color: #0f172a !important;
+
+    border: 1px solid #cbd5e1 !important;
+}
+
+
+/* TOOLBAR */
+
+.m09-toolbar {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 16px;
+
+    margin-bottom: 18px;
+}
+
+
+.m09-export-btn {
+    min-width: 145px;
+    height: 44px;
+
+    padding: 0 20px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #0F8F87;
+    color: #ffffff;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+
+.m09-report-heading {
+    margin: 0 0 12px;
+
+    color: #0B716B;
+
+    font-size: 18px;
+}
+
+
+/* COMPONENT SUMMARY */
+
+.component-summary {
+    margin-bottom: 24px;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+}
+
+
+.component-summary h3 {
+    margin: 5px 0 18px;
+
+    color: #0B716B;
+}
+
+
+.summary-label {
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+
+.component-summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+
+.summary-item {
+    padding: 14px;
+
+    background: #f8fafc;
+
+    border-radius: 9px;
+}
+
+
+.summary-item span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+
+.component-required {
+    margin-bottom: 24px;
+
+    padding: 16px;
+
+    background: #f0fdfa;
+
+    color: #0B716B;
+
+    border: 1px solid #99f6e4;
+    border-radius: 10px;
+}
+
+
+/* TABLE */
+
+.m09-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+}
+
+
+.m09-table {
+    width: 100%;
+
+    min-width: 1250px;
+
+    border-collapse: collapse;
+}
+
+
+.m09-table thead {
+    background: #eaf7f5;
+}
+
+
+.m09-table th {
+    padding: 17px 16px;
+
+    color: #08766f;
+
+    border-bottom: 1px solid #dce7e9;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+
+.m09-table td {
+    padding: 18px 16px;
+
+    color: #1e293b;
+
+    border-bottom: 1px solid #eef2f4;
+
+    font-size: 14px;
+
+    vertical-align: middle;
+}
+
+
+.m09-table tbody tr:hover {
+    background: #f8fcfb;
+}
+
+
+.m09-location {
+    min-width: 230px;
+}
+
+
+.maintenance-issue {
+    min-width: 220px;
+}
+
+
+.m09-badge {
+    display: inline-flex;
+
+    padding: 6px 11px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+.m09-badge-info {
+    background: #D9F2EF;
+    color: #08766f;
+}
+
+
+.m09-badge-default {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+
+.m09-empty {
+    padding: 36px !important;
+
+    color: #64748b !important;
+
+    text-align: center;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+
+    .m09-filter-card {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .component-summary-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .m09-filter-card {
+        grid-template-columns: 1fr;
+    }
+
+
+    .m09-actions {
+        grid-template-columns:
+            1fr 1fr !important;
+    }
+
+
+    .m09-primary-btn,
+    .m09-secondary-btn {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+
+
+    .m09-toolbar {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .m09-export-btn {
+        width: 100%;
+    }
+
+
+    .component-summary-grid {
+        grid-template-columns: 1fr;
+        
+    /* =========================================================
+    PRIORITY COLOURS
+    ========================================================= */
+
+    .m09-priority-critical {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+
+    .m09-priority-high {
+        background: #ffedd5;
+        color: #9a3412;
+    }
+
+
+    .m09-priority-medium {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+
+    .m09-priority-low {
+        background: #D9F2EF;
+        color: #08766f;
+    }
+        }
+
+    }
+
+
+
+</style>
+
+
+{% endblock %}

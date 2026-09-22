@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>QR Code Inactive</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #f4f7f8;
+            color: #1f2937;
+
+            font-family:
+                "Segoe UI",
+                Tahoma,
+                Geneva,
+                Verdana,
+                sans-serif;
+        }
+
+        .inactive-card {
+            width: 100%;
+            max-width: 580px;
+            padding: 34px;
+
+            background: white;
+
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+
+            box-shadow:
+                0 12px 35px rgba(15, 23, 42, 0.08);
+
+            text-align: center;
+        }
+
+        .status-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #fee2e2;
+            color: #b91c1c;
+
+            border-radius: 50%;
+
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+
+            color: #b91c1c;
+
+            font-size: 29px;
+        }
+
+        p {
+            margin: 8px 0;
+
+            color: #64748b;
+
+            line-height: 1.6;
+        }
+
+        .qr-reference {
+            margin-top: 22px;
+            padding: 15px;
+
+            background: #f8fafc;
+
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+        }
+
+        .qr-reference strong {
+            display: block;
+            margin-top: 5px;
+
+            color: #1f2937;
+
+            word-break: break-word;
+        }
+
+        .notice {
+            margin-top: 20px;
+            padding: 15px;
+
+            background: #fff7ed;
+            color: #9a3412;
+
+            border: 1px solid #fed7aa;
+            border-radius: 10px;
+
+            line-height: 1.6;
+        }
+
+        .replacement-panel {
+            margin-top: 22px;
+            padding: 19px;
+
+            background: #ecfdf5;
+            color: #166534;
+
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+
+            line-height: 1.6;
+        }
+
+        .replacement-panel p {
+            margin: 8px 0 0;
+            color: #166534;
+        }
+
+        .replacement-reference {
+            display: block;
+            margin-top: 5px;
+
+            font-size: 17px;
+            word-break: break-word;
+        }
+
+        .replacement-button {
+            display: inline-block;
+
+            margin-top: 15px;
+            padding: 11px 17px;
+
+            background: #0f766e;
+            color: white;
+
+            border-radius: 9px;
+
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .replacement-button:hover {
+            background: #0b5e58;
+        }
+
+        .footer {
+            margin-top: 25px;
+
+            color: #94a3b8;
+
+            font-size: 12px;
+        }
+
+        @media (max-width: 550px) {
+            body {
+                padding: 12px;
+            }
+
+            .inactive-card {
+                padding: 26px 20px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="inactive-card">
+
+        <div class="status-icon">
+            !
+        </div>
+
+        <h1>QR Code Inactive</h1>
+
+        <p>
+            This QR code is no longer active and cannot be used
+            to access the current asset record.
+        </p>
+
+        <div class="qr-reference">
+            Old QR reference:
+
+            <strong>
+                {{ qr.qr_id }}
+            </strong>
+        </div>
+
+        {% if qr.replacement_reason %}
+            <div class="notice">
+                <strong>Replacement reason</strong>
+
+                <div style="margin-top: 5px;">
+                    {{ qr.replacement_reason }}
+                </div>
+            </div>
+        {% else %}
+            <div class="notice">
+                This label may have been deactivated, withdrawn
+                or replaced. Please contact the responsible
+                asset-management unit.
+            </div>
+        {% endif %}
+
+        {% if latest_replacement %}
+            <div class="replacement-panel">
+                <strong>
+                    A newer QR label is available.
+                </strong>
+
+                <p>
+                    Latest QR reference:
+                </p>
+
+                <strong class="replacement-reference">
+                    {{ latest_replacement.qr_id }}
+                </strong>
+
+                {% if latest_replacement.is_active %}
+                    <a
+                        href="{% url 'assets:qr_scan' latest_replacement.public_id %}"
+                        class="replacement-button"
+                    >
+                        Open Latest Asset Record
+                    </a>
+                {% else %}
+                    <p>
+                        The latest replacement QR is also inactive.
+                    </p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="footer">
+            Government Immovable Asset Information System
+        </div>
+
+    </main>
+</body>
+</html>

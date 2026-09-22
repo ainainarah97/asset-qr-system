@@ -1,0 +1,34 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+Delete Premise | Asset QR System
+{% endblock %}
+
+{% block content %}
+    <h2>Delete Premise</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <p>
+            Are you sure you want to delete
+            <strong>{{ premise.name }}</strong>?
+        </p>
+
+        <p>
+            Deleting this premise may also delete its related blocks,
+            levels, rooms and components.
+        </p>
+
+        <button type="submit">
+            Confirm Delete
+        </button>
+
+        <a
+            href="{% url 'assets:premise_list' %}"
+            class="button"
+        >
+            Cancel
+        </a>
+    </form>
+{% endblock %}

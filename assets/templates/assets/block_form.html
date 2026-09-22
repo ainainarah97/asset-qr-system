@@ -1,0 +1,223 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+{% if block %}
+Edit Block | Asset QR System
+{% else %}
+Add Block | Asset QR System
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            {% if block %}
+                Edit Block / External Structure
+            {% else %}
+                Add Block / External Structure
+            {% endif %}
+        </h2>
+
+        <p>
+            Register and manage building blocks and external structures.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<div class="form-card">
+
+
+<form method="post">
+
+{% csrf_token %}
+
+
+<div class="form-grid">
+
+
+<!-- PREMISE -->
+
+<div class="form-group form-group-full">
+
+<label for="{{ form.premise.id_for_label }}">
+Premise
+</label>
+
+{{ form.premise }}
+
+{% if form.premise.errors %}
+<div class="form-error">
+{{ form.premise.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- CODE -->
+
+<div class="form-group">
+
+<label for="{{ form.code.id_for_label }}">
+Block Code
+</label>
+
+{{ form.code }}
+
+{% if form.code.errors %}
+<div class="form-error">
+{{ form.code.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- NAME -->
+
+<div class="form-group">
+
+<label for="{{ form.name.id_for_label }}">
+Block Name
+</label>
+
+{{ form.name }}
+
+{% if form.name.errors %}
+<div class="form-error">
+{{ form.name.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- STRUCTURE TYPE -->
+
+<div class="form-group">
+
+<label for="{{ form.structure_type.id_for_label }}">
+Structure Type
+</label>
+
+{{ form.structure_type }}
+
+{% if form.structure_type.errors %}
+<div class="form-error">
+{{ form.structure_type.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- SECURITY LEVEL -->
+
+<div class="form-group">
+
+<label for="{{ form.security_level.id_for_label }}">
+Security Level
+</label>
+
+{{ form.security_level }}
+
+{% if form.security_level.errors %}
+<div class="form-error">
+{{ form.security_level.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- FUNCTION -->
+
+<div class="form-group form-group-full">
+
+<label for="{{ form.function.id_for_label }}">
+Function
+</label>
+
+{{ form.function }}
+
+{% if form.function.errors %}
+<div class="form-error">
+{{ form.function.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- STATUS -->
+
+<div class="form-group">
+
+<label for="{{ form.status.id_for_label }}">
+Status
+</label>
+
+{{ form.status }}
+
+{% if form.status.errors %}
+<div class="form-error">
+{{ form.status.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+</div>
+
+
+
+<div class="form-actions">
+
+
+<a
+href="{% url 'assets:block_list' %}"
+class="button button-secondary"
+>
+Cancel
+</a>
+
+
+<button
+type="submit"
+class="button"
+>
+{% if block %}
+Save Changes
+{% else %}
+Save Block
+{% endif %}
+</button>
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+
+{% endblock %}

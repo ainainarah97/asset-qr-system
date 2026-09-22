@@ -1,0 +1,80 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+Archive Document | Asset QR System
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Archive Document</h2>
+
+        <p>
+            Confirm that you want to archive this document.
+        </p>
+    </div>
+</div>
+
+
+<div class="form-container">
+
+    <div class="alert alert-warning">
+        <strong>
+            This document will not be permanently deleted.
+        </strong>
+
+        <p>
+            Its status will change to Archived, while the record
+            and uploaded file remain in the system.
+        </p>
+    </div>
+
+
+    <div class="detail-card">
+        <p>
+            <strong>Document Number:</strong>
+            {{ document.document_number }}
+        </p>
+
+        <p>
+            <strong>Title:</strong>
+            {{ document.title }}
+        </p>
+
+        <p>
+            <strong>Document Type:</strong>
+            {{ document.get_document_type_display }}
+        </p>
+
+        <p>
+            <strong>Current Status:</strong>
+            {{ document.get_status_display }}
+        </p>
+    </div>
+
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-actions">
+            <button
+                type="submit"
+                class="button button-danger"
+            >
+                Archive Document
+            </button>
+
+            <a
+                href="{% url 'assets:drawing_list' %}#documents"
+                class="button button-secondary"
+            >
+                Cancel
+            </a>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

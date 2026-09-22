@@ -1,0 +1,1217 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+Handover Records | AssetGuard
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            Handover Records
+        </h2>
+
+        <p>
+            Review asset information and prepare handover documentation
+            for a selected premise.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     PREMISE FILTER
+     ========================================================= -->
+
+<form method="get" class="m09-filter-card handover-filter">
+
+
+    <div class="m09-filter-field handover-premise-field">
+
+        <label>
+            Premise
+        </label>
+
+        <select name="premise">
+
+            <option value="">
+                Select Premise
+            </option>
+
+            {% for premise in premises %}
+
+                <option
+                    value="{{ premise.id }}"
+                    {% if premise_selected == premise.id|stringformat:"s" %}
+                        selected
+                    {% endif %}
+                >
+                    {{ premise.name }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <!-- GENERATE + RESET -->
+
+    <div class="m09-actions">
+
+        <button
+            type="submit"
+            class="m09-primary-btn"
+        >
+            Generate
+        </button>
+
+
+        <a
+            href="{% url 'assets:handover_report' %}"
+            class="m09-secondary-btn"
+        >
+            Reset
+        </a>
+
+    </div>
+
+
+</form>
+
+
+
+{% if selected_premise %}
+
+
+<!-- =========================================================
+     SELECTED PREMISE
+     ========================================================= -->
+
+<div class="selected-premise-card">
+
+    <span>
+        Selected Premise
+    </span>
+
+    <h3>
+        {{ selected_premise.name }}
+    </h3>
+
+</div>
+
+
+
+<!-- =========================================================
+     READINESS
+     ========================================================= -->
+
+<h3 class="m09-report-heading">
+    Handover Readiness
+</h3>
+
+
+<div class="handover-summary-grid">
+
+
+    <div class="handover-summary-card">
+
+        <span>
+            Blocks / Structures
+        </span>
+
+        <strong>
+            {{ block_count }}
+        </strong>
+
+    </div>
+
+
+    <div class="handover-summary-card">
+
+        <span>
+            Levels
+        </span>
+
+        <strong>
+            {{ level_count }}
+        </strong>
+
+    </div>
+
+
+    <div class="handover-summary-card">
+
+        <span>
+            Rooms / Open Areas
+        </span>
+
+        <strong>
+            {{ room_count }}
+        </strong>
+
+    </div>
+
+
+    <div class="handover-summary-card">
+
+        <span>
+            Asset Components
+        </span>
+
+        <strong>
+            {{ component_count }}
+        </strong>
+
+    </div>
+
+
+    <div class="handover-summary-card">
+
+        <span>
+            QR Labels
+        </span>
+
+        <strong>
+            {{ qr_count }}
+        </strong>
+
+    </div>
+
+
+    <div class="handover-summary-card">
+
+        <span>
+            Drawings
+        </span>
+
+        <strong>
+            {{ drawing_count }}
+        </strong>
+
+    </div>
+
+
+    <div class="handover-summary-card">
+
+        <span>
+            Documents
+        </span>
+
+        <strong>
+            {{ document_count }}
+        </strong>
+
+    </div>
+
+
+    <div
+        class="handover-summary-card
+        {% if outstanding_maintenance_count %}
+            maintenance-warning
+        {% endif %}"
+    >
+
+        <span>
+            Outstanding Maintenance
+        </span>
+
+        <strong>
+            {{ outstanding_maintenance_count }}
+        </strong>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================================================
+     CHECKLIST
+     ========================================================= -->
+
+<h3 class="m09-report-heading section-space">
+    Handover Checklist
+</h3>
+
+
+<div class="checklist-card">
+
+
+    <div class="checklist-row">
+
+        <span class="check-icon complete">
+            ✓
+        </span>
+
+        Premise information registered
+
+    </div>
+
+
+    <div class="checklist-row">
+
+        {% if checklist.blocks %}
+
+            <span class="check-icon complete">
+                ✓
+            </span>
+
+        {% else %}
+
+            <span class="check-icon incomplete">
+                !
+            </span>
+
+        {% endif %}
+
+        Blocks / structures registered
+
+    </div>
+
+
+    <div class="checklist-row">
+
+        {% if checklist.levels %}
+
+            <span class="check-icon complete">
+                ✓
+            </span>
+
+        {% else %}
+
+            <span class="check-icon incomplete">
+                !
+            </span>
+
+        {% endif %}
+
+        Levels registered
+
+    </div>
+
+
+    <div class="checklist-row">
+
+        {% if checklist.rooms %}
+
+            <span class="check-icon complete">
+                ✓
+            </span>
+
+        {% else %}
+
+            <span class="check-icon incomplete">
+                !
+            </span>
+
+        {% endif %}
+
+        Rooms / open areas registered
+
+    </div>
+
+
+    <div class="checklist-row">
+
+        {% if checklist.components %}
+
+            <span class="check-icon complete">
+                ✓
+            </span>
+
+        {% else %}
+
+            <span class="check-icon incomplete">
+                !
+            </span>
+
+        {% endif %}
+
+        Asset components registered
+
+    </div>
+
+
+    <div class="checklist-row">
+
+        {% if checklist.qr_codes %}
+
+            <span class="check-icon complete">
+                ✓
+            </span>
+
+        {% else %}
+
+            <span class="check-icon incomplete">
+                !
+            </span>
+
+        {% endif %}
+
+        QR labels generated
+
+    </div>
+
+
+    <div class="checklist-row">
+
+        {% if checklist.drawings %}
+
+            <span class="check-icon complete">
+                ✓
+            </span>
+
+        {% else %}
+
+            <span class="check-icon incomplete">
+                !
+            </span>
+
+        {% endif %}
+
+        Drawings registered
+
+    </div>
+
+
+    <div class="checklist-row">
+
+        {% if checklist.documents %}
+
+            <span class="check-icon complete">
+                ✓
+            </span>
+
+        {% else %}
+
+            <span class="check-icon incomplete">
+                !
+            </span>
+
+        {% endif %}
+
+        Documents registered
+
+    </div>
+
+
+    <div class="checklist-row">
+
+        {% if outstanding_maintenance_count == 0 %}
+
+            <span class="check-icon complete">
+                ✓
+            </span>
+
+            No outstanding maintenance requests
+
+        {% else %}
+
+            <span class="check-icon warning">
+                !
+            </span>
+
+            {{ outstanding_maintenance_count }}
+            outstanding maintenance request(s)
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =========================================================
+     DOCUMENT REGISTER
+     ========================================================= -->
+
+<h3 class="m09-report-heading section-space">
+    Drawings & Documents Register
+</h3>
+
+
+<div class="m09-table-wrapper">
+
+<table class="m09-table">
+
+    <thead>
+
+        <tr>
+
+            <th>No.</th>
+            <th>Reference No.</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Status</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+
+        {% for drawing in drawings %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+            <td>
+
+                <strong>
+                    {{ drawing.drawing_number }}
+                </strong>
+
+            </td>
+
+            <td>
+                {{ drawing.title }}
+            </td>
+
+            <td>
+                Drawing
+            </td>
+
+            <td>
+                {{ drawing.get_status_display }}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+
+
+        {% for document in documents %}
+
+        <tr>
+
+            <td>
+                {{ forloop.counter }}
+            </td>
+
+            <td>
+
+                <strong>
+                    {{ document.document_number }}
+                </strong>
+
+            </td>
+
+            <td>
+                {{ document.title }}
+            </td>
+
+            <td>
+                Document
+            </td>
+
+            <td>
+                {{ document.get_status_display }}
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+
+
+        {% if not drawings and not documents %}
+
+        <tr>
+
+            <td colspan="5" class="m09-empty">
+                No drawings or documents registered for this premise.
+            </td>
+
+        </tr>
+
+        {% endif %}
+
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+
+<!-- =========================================================
+     MAINTENANCE
+     ========================================================= -->
+
+<h3 class="m09-report-heading section-space">
+    Outstanding Maintenance
+</h3>
+
+
+<div class="m09-table-wrapper">
+
+<table class="m09-table">
+
+    <thead>
+
+        <tr>
+
+            <th>Request</th>
+            <th>Asset / Location</th>
+            <th>Issue</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Assigned To</th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for maintenance in outstanding_maintenance %}
+
+        <tr>
+
+
+            <td>
+
+                <strong>
+                    {{ maintenance.request_no }}
+                </strong>
+
+            </td>
+
+
+            <td>
+
+                {% if maintenance.component %}
+
+                    {{ maintenance.component.component_id }}
+                    -
+                    {{ maintenance.component.name }}
+
+                {% elif maintenance.room %}
+
+                    {{ maintenance.room.room_tag }}
+                    -
+                    {{ maintenance.room.name }}
+
+                {% elif maintenance.level %}
+
+                    {{ maintenance.level.code }}
+                    -
+                    {{ maintenance.level.name }}
+
+                {% elif maintenance.block %}
+
+                    {{ maintenance.block.code }}
+                    -
+                    {{ maintenance.block.name }}
+
+                {% else %}
+
+                    {{ maintenance.premise.name }}
+
+                {% endif %}
+
+            </td>
+
+
+            <td>
+                {{ maintenance.description }}
+            </td>
+
+
+            <td>
+                {{ maintenance.get_priority_display }}
+            </td>
+
+
+            <td>
+                {{ maintenance.get_status_display }}
+            </td>
+
+
+            <td>
+
+                {% if maintenance.assigned_to %}
+
+                    {{ maintenance.assigned_to.get_full_name|default:maintenance.assigned_to.username }}
+
+                {% else %}
+
+                    Not Assigned
+
+                {% endif %}
+
+            </td>
+
+
+        </tr>
+
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="6" class="m09-empty">
+                No outstanding maintenance requests.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+
+<!-- =========================================================
+     EXPORT
+     ========================================================= -->
+
+<div class="handover-export-row">
+
+    <a
+        href="{% url 'assets:handover_report_pdf' %}?premise={{ selected_premise.id }}"
+        class="m09-export-btn"
+    >
+        Export Handover PDF
+    </a>
+
+</div>
+
+
+
+{% else %}
+
+
+<div class="handover-empty-state">
+
+    <div class="handover-empty-icon">
+        09
+    </div>
+
+    <h3>
+        Select a premise
+    </h3>
+
+    <p>
+        Choose a premise above to review its asset, QR,
+        document and maintenance handover readiness.
+    </p>
+
+</div>
+
+
+{% endif %}
+
+
+
+<style>
+
+/* =========================================================
+   SAME MODULE 09 FILTER CARD
+   ========================================================= */
+
+.m09-filter-card {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+
+    padding: 22px;
+    margin-bottom: 28px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+}
+
+
+.handover-premise-field {
+    grid-column: 1 / -1;
+}
+
+
+.m09-filter-field label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+.m09-filter-field select {
+    width: 100%;
+    height: 44px;
+
+    padding: 9px 12px;
+
+    background: #ffffff;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 14px;
+}
+
+
+.m09-filter-field select:focus {
+    outline: none;
+
+    border-color: #0F8F87;
+
+    box-shadow:
+        0 0 0 3px #D9F2EF;
+}
+
+
+/* GENERATE + RESET ALWAYS TOGETHER */
+
+.m09-actions {
+    grid-column: 1 / -1 !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+        120px 120px !important;
+
+    justify-content: end !important;
+
+    gap: 10px !important;
+
+    width: 100% !important;
+}
+
+
+.m09-primary-btn,
+.m09-secondary-btn {
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+
+    height: 44px !important;
+
+    display: inline-flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    margin: 0 !important;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-decoration: none !important;
+}
+
+
+.m09-primary-btn {
+    background: #0F8F87 !important;
+    color: #ffffff !important;
+
+    border: 1px solid #0F8F87 !important;
+
+    cursor: pointer;
+}
+
+
+.m09-primary-btn:hover {
+    background: #0B716B !important;
+}
+
+
+.m09-secondary-btn {
+    background: #ffffff !important;
+    color: #0f172a !important;
+
+    border: 1px solid #cbd5e1 !important;
+}
+
+
+/* SELECTED PREMISE */
+
+.selected-premise-card {
+    margin-bottom: 24px;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+}
+
+
+.selected-premise-card span {
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+
+.selected-premise-card h3 {
+    margin: 6px 0 0;
+
+    color: #0B716B;
+}
+
+
+/* HEADING */
+
+.m09-report-heading {
+    margin: 0 0 12px;
+
+    color: #0B716B;
+
+    font-size: 18px;
+}
+
+
+.section-space {
+    margin-top: 30px;
+}
+
+
+/* SUMMARY */
+
+.handover-summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+
+.handover-summary-card {
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 12px;
+}
+
+
+.handover-summary-card span {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+.handover-summary-card strong {
+    color: #0B716B;
+
+    font-size: 26px;
+}
+
+
+.maintenance-warning {
+    background: #fff7ed;
+
+    border-color: #fed7aa;
+}
+
+
+.maintenance-warning strong {
+    color: #c2410c;
+}
+
+
+/* CHECKLIST */
+
+.checklist-card {
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+}
+
+
+.checklist-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 15px 18px;
+
+    border-bottom: 1px solid #eef2f4;
+}
+
+
+.checklist-row:last-child {
+    border-bottom: none;
+}
+
+
+.check-icon {
+    width: 28px;
+    height: 28px;
+
+    flex: 0 0 28px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-weight: 700;
+}
+
+
+.check-icon.complete {
+    background: #dcfce7;
+    color: #166534;
+}
+
+
+.check-icon.incomplete {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+
+.check-icon.warning {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+
+/* TABLE */
+
+.m09-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+}
+
+
+.m09-table {
+    width: 100%;
+
+    min-width: 900px;
+
+    border-collapse: collapse;
+}
+
+
+.m09-table thead {
+    background: #eaf7f5;
+}
+
+
+.m09-table th {
+    padding: 16px;
+
+    color: #08766f;
+
+    border-bottom: 1px solid #dce7e9;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-align: left;
+}
+
+
+.m09-table td {
+    padding: 16px;
+
+    color: #1e293b;
+
+    border-bottom: 1px solid #eef2f4;
+
+    font-size: 14px;
+
+    vertical-align: top;
+}
+
+
+.m09-table tbody tr:hover {
+    background: #f8fcfb;
+}
+
+
+.m09-empty {
+    padding: 32px !important;
+
+    color: #64748b !important;
+
+    text-align: center;
+}
+
+
+/* EXPORT */
+
+.handover-export-row {
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 24px;
+}
+
+
+.m09-export-btn {
+    min-width: 190px;
+    height: 44px;
+
+    padding: 0 20px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #0F8F87;
+    color: #ffffff;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+
+/* EMPTY */
+
+.handover-empty-state {
+    padding: 60px 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+    border-radius: 14px;
+
+    text-align: center;
+}
+
+
+.handover-empty-icon {
+    width: 58px;
+    height: 58px;
+
+    margin: 0 auto 16px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #D9F2EF;
+    color: #08766f;
+
+    border-radius: 14px;
+
+    font-weight: 700;
+}
+
+
+.handover-empty-state p {
+    color: #64748b;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+
+    .handover-summary-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .m09-filter-card {
+        grid-template-columns: 1fr;
+    }
+
+
+    .m09-actions {
+        grid-template-columns:
+            1fr 1fr !important;
+    }
+
+
+    .m09-primary-btn,
+    .m09-secondary-btn {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+
+
+    .handover-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .m09-export-btn {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+
+{% endblock %}

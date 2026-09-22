@@ -1,0 +1,956 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+QR Codes | Asset QR System
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            QR and Asset Labels
+        </h2>
+
+        <p>
+            Manage dynamic QR codes linked to premises,
+            blocks, levels, rooms and components.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'assets:qr_code_create' %}"
+        class="button"
+    >
+        Create QR Code
+    </a>
+
+</div>
+
+
+
+<!-- ========================================= -->
+<!-- SORTING -->
+<!-- ========================================= -->
+
+<form method="get">
+
+<select
+    name="sort"
+    class="form-control"
+    onchange="this.form.submit()"
+>
+
+
+<option value="">
+Sort By
+</option>
+
+
+<option
+value="newest"
+{% if request.GET.sort == "newest" %}
+selected
+{% endif %}
+>
+Newest QR
+</option>
+
+
+<option
+value="oldest"
+{% if request.GET.sort == "oldest" %}
+selected
+{% endif %}
+>
+Oldest QR
+</option>
+
+
+<option
+value="type"
+{% if request.GET.sort == "type" %}
+selected
+{% endif %}
+>
+QR Type
+</option>
+
+
+<option
+value="scan_high"
+{% if request.GET.sort == "scan_high" %}
+selected
+{% endif %}
+>
+Most Scanned
+</option>
+
+
+<option
+value="scan_low"
+{% if request.GET.sort == "scan_low" %}
+selected
+{% endif %}
+>
+Least Scanned
+</option>
+
+
+<option
+value="active"
+{% if request.GET.sort == "active" %}
+selected
+{% endif %}
+>
+Active First
+</option>
+
+
+<option
+value="inactive"
+{% if request.GET.sort == "inactive" %}
+selected
+{% endif %}
+>
+Inactive First
+</option>
+
+
+</select>
+
+</form>
+
+
+
+<!-- ========================================= -->
+<!-- FILTER PANEL -->
+<!-- ========================================= -->
+
+<div class="filter-card">
+
+<form method="get">
+
+
+<div class="filter-grid">
+
+
+<!-- SEARCH -->
+
+<div class="filter-group">
+
+<label>
+Search
+</label>
+
+<input
+type="text"
+name="search"
+class="form-control"
+placeholder="Search QR or linked asset..."
+value="{{ request.GET.search|default:'' }}"
+>
+
+</div>
+
+
+
+<!-- QR TYPE -->
+
+<div class="filter-group">
+
+<label>
+QR Type
+</label>
+
+<select
+name="qr_type"
+class="form-control"
+>
+
+<option value="">
+All QR Types
+</option>
+
+{% for value,label in qr_types %}
+
+<option
+value="{{ value }}"
+{% if request.GET.qr_type == value %}
+selected
+{% endif %}
+>
+{{ label }}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+
+
+<!-- STATUS -->
+
+<div class="filter-group">
+
+<label>
+Status
+</label>
+
+<select
+name="status"
+class="form-control"
+>
+
+<option value="">
+All Statuses
+</option>
+
+<option
+value="active"
+{% if request.GET.status == "active" %}
+selected
+{% endif %}
+>
+Active
+</option>
+
+<option
+value="inactive"
+{% if request.GET.status == "inactive" %}
+selected
+{% endif %}
+>
+Inactive
+</option>
+
+</select>
+
+</div>
+
+
+
+<!-- PREMISE -->
+
+<div class="filter-group">
+
+<label>
+Premise
+</label>
+
+<select
+name="premise"
+class="form-control"
+>
+
+<option value="">
+All Premises
+</option>
+
+{% for item in premises %}
+
+<option
+value="{{ item }}"
+{% if request.GET.premise == item %}
+selected
+{% endif %}
+>
+{{ item }}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+
+
+<!-- BLOCK -->
+
+<div class="filter-group">
+
+<label>
+Block
+</label>
+
+<select
+name="block_name"
+class="form-control"
+>
+
+<option value="">
+All Blocks
+</option>
+
+{% for item in blocks %}
+
+<option
+value="{{ item }}"
+{% if request.GET.block_name == item %}
+selected
+{% endif %}
+>
+{{ item }}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+
+
+<!-- LEVEL -->
+
+<div class="filter-group">
+
+<label>
+Level
+</label>
+
+<select
+name="level_name"
+class="form-control"
+>
+
+<option value="">
+All Levels
+</option>
+
+{% for item in levels %}
+
+<option
+value="{{ item }}"
+{% if request.GET.level_name == item %}
+selected
+{% endif %}
+>
+{{ item }}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+
+
+<!-- ROOM -->
+
+<div class="filter-group">
+
+<label>
+Room
+</label>
+
+<select
+name="room_name"
+class="form-control"
+>
+
+<option value="">
+All Rooms
+</option>
+
+{% for item in rooms %}
+
+<option
+value="{{ item }}"
+{% if request.GET.room_name == item %}
+selected
+{% endif %}
+>
+{{ item }}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+
+
+<!-- COMPONENT -->
+
+<div class="filter-group">
+
+<label>
+Component
+</label>
+
+<select
+name="component_name"
+class="form-control"
+>
+
+<option value="">
+All Components
+</option>
+
+{% for item in components %}
+
+<option
+value="{{ item }}"
+{% if request.GET.component_name == item %}
+selected
+{% endif %}
+>
+{{ item }}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+
+</div>
+
+
+
+<div class="filter-actions">
+
+
+<button
+type="submit"
+class="button"
+>
+Filter
+</button>
+
+
+<a
+href="{% url 'assets:qr_code_list' %}"
+class="button button-secondary"
+>
+Reset
+</a>
+
+
+</div>
+
+
+</form>
+
+</div>
+
+
+
+<!-- ========================================= -->
+<!-- QR TABLE -->
+<!-- ========================================= -->
+
+<div class="table-container">
+
+<table class="room-table">
+
+
+<thead>
+
+<tr>
+
+<th>QR ID</th>
+<th>QR Type</th>
+<th>Linked Asset</th>
+<th>Status</th>
+<th>Last Scan</th>
+<th>Scan Count</th>
+<th>QR Image</th>
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+
+
+<tbody>
+
+
+{% for qr in qr_codes %}
+
+
+<tr>
+
+
+
+<!-- QR ID -->
+
+<td>
+
+<strong>
+{{ qr.qr_id }}
+</strong>
+
+
+<div
+class="secondary-text"
+style="
+margin-top:5px;
+max-width:190px;
+word-break:break-all;
+"
+>
+
+{{ qr.public_id }}
+
+</div>
+
+</td>
+
+
+
+<!-- QR TYPE -->
+
+<td>
+
+<span class="badge">
+
+{{ qr.get_qr_type_display }}
+
+</span>
+
+</td>
+
+
+
+<!-- LINKED ASSET -->
+
+<td>
+
+
+{% if qr.component %}
+
+
+<strong>
+{{ qr.component.component_id }}
+</strong>
+
+
+<div class="secondary-text">
+
+{{ qr.component.name }}
+
+</div>
+
+
+<div class="secondary-text">
+
+Room:
+{{ qr.component.room.room_tag }}
+
+</div>
+
+
+
+{% elif qr.room %}
+
+
+<strong>
+
+{{ qr.room.room_tag }}
+
+</strong>
+
+
+<div class="secondary-text">
+
+{{ qr.room.name }}
+
+</div>
+
+
+
+{% elif qr.level %}
+
+
+<strong>
+
+{{ qr.level.block.code }}.{{ qr.level.code }}
+
+</strong>
+
+
+<div class="secondary-text">
+
+{{ qr.level.name }}
+
+</div>
+
+
+
+{% elif qr.block %}
+
+
+<strong>
+
+{{ qr.block.code }}
+
+</strong>
+
+
+<div class="secondary-text">
+
+{{ qr.block.name }}
+
+</div>
+
+
+
+{% elif qr.premise %}
+
+
+<strong>
+
+{{ qr.premise.name }}
+
+</strong>
+
+
+<div class="secondary-text">
+
+DPA:
+{{ qr.premise.dpa_number|default:"-" }}
+
+</div>
+
+
+
+{% else %}
+
+
+<span class="secondary-text">
+
+Not linked
+
+</span>
+
+
+{% endif %}
+
+
+</td>
+
+
+
+<!-- STATUS -->
+
+<td>
+
+
+{% if qr.is_active %}
+
+
+<span class="badge security-public">
+
+Active
+
+</span>
+
+
+{% else %}
+
+
+<span class="badge security-restricted">
+
+Inactive
+
+</span>
+
+
+{% endif %}
+
+
+</td>
+
+
+
+<!-- LAST SCAN -->
+
+<td>
+
+
+{% if qr.last_scan %}
+
+
+{{ qr.last_scan|date:"d M Y, H:i" }}
+
+
+{% else %}
+
+
+<span class="secondary-text">
+
+Never scanned
+
+</span>
+
+
+{% endif %}
+
+
+</td>
+
+
+
+<!-- SCAN COUNT -->
+
+<td>
+
+<strong>
+
+{{ qr.scan_count }}
+
+</strong>
+
+</td>
+
+
+
+<!-- QR IMAGE -->
+
+<td>
+
+
+{% if qr.is_active %}
+
+
+<a
+href="{% url 'assets:dynamic_qr_image' qr.public_id %}"
+target="_blank"
+rel="noopener noreferrer"
+>
+
+
+<img
+
+src="{% url 'assets:dynamic_qr_image' qr.public_id %}"
+
+alt="QR code {{ qr.qr_id }}"
+
+width="80"
+
+height="80"
+
+style="
+display:block;
+width:80px;
+height:80px;
+object-fit:contain;
+padding:4px;
+background:white;
+border:1px solid #e2e8f0;
+border-radius:6px;
+"
+
+>
+
+
+</a>
+
+
+{% else %}
+
+
+<span class="secondary-text">
+
+QR inactive
+
+</span>
+
+
+{% endif %}
+
+
+</td>
+
+
+
+<!-- ACTIONS -->
+
+<td>
+
+
+<div
+style="
+display:flex;
+flex-direction:column;
+gap:8px;
+min-width:155px;
+"
+>
+
+
+{% if qr.is_active %}
+
+
+<a
+
+href="{% url 'assets:qr_scan' qr.public_id %}"
+
+class="button button-small"
+
+target="_blank"
+
+rel="noopener noreferrer"
+
+>
+
+Open Scan Page
+
+</a>
+
+
+
+<a
+
+href="{% url 'assets:dynamic_qr_download' qr.public_id %}"
+
+class="button button-small button-secondary"
+
+>
+
+Download QR
+
+</a>
+
+
+
+<a
+
+href="{% url 'assets:qr_label_preview' qr.public_id %}"
+
+class="button button-small button-secondary"
+
+target="_blank"
+
+rel="noopener noreferrer"
+
+>
+
+Print Label
+
+</a>
+
+
+
+{% if not qr.replaced_by %}
+
+
+<a
+
+href="{% url 'assets:qr_code_replace' qr.public_id %}"
+
+class="button button-small button-secondary"
+
+>
+
+Replace QR
+
+</a>
+
+
+{% endif %}
+
+
+
+{% else %}
+
+
+<span class="secondary-text">
+
+Scan unavailable
+
+</span>
+
+
+{% endif %}
+
+
+
+<a
+
+href="{% url 'assets:qr_code_edit' qr.public_id %}"
+
+class="button button-small button-secondary"
+
+>
+
+Edit
+
+</a>
+
+
+</div>
+
+
+</td>
+
+
+</tr>
+
+
+
+{% empty %}
+
+
+<tr>
+
+
+<td colspan="8" class="empty-message">
+
+
+No dynamic QR codes found.
+
+
+<div style="margin-top:16px;">
+
+
+<a
+
+href="{% url 'assets:qr_code_create' %}"
+
+class="button"
+
+>
+
+Create First QR Code
+
+</a>
+
+
+</div>
+
+
+</td>
+
+
+</tr>
+
+
+{% endfor %}
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+{% endblock %}

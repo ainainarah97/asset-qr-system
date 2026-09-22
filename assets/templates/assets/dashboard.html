@@ -1,0 +1,419 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Dashboard" %} | Asset QR System
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =====================================================
+     DASHBOARD HERO
+     ===================================================== -->
+
+<section class="dashboard-hero">
+
+    <div>
+
+        <p class="hero-label">
+            {% trans "Asset Management Portal" %}
+        </p>
+
+        <h1>
+            {% trans "Government Immovable Asset Information System" %}
+        </h1>
+
+        <p>
+            {% trans "Register, organise and manage premises, buildings, spaces, components, QR records and supporting drawings." %}
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     DA6 BULK IMPORT
+     ===================================================== -->
+
+<section class="dashboard-section">
+
+    <div class="section-heading">
+
+        <h2>
+            {% trans "DA6 Excel Bulk Import" %}
+        </h2>
+
+        <p>
+            {% trans "Import existing asset information from a completed DA6 Excel workbook instead of entering large amounts of data manually." %}
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'assets:excel_import_create' %}"
+        class="module-card"
+        style="
+            margin-bottom: 28px;
+            max-width: 100%;
+        "
+    >
+
+        <div class="module-icon">
+            XLS
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                {% trans "Import DA6 Excel Workbook" %}
+            </h3>
+
+            <p>
+                {% trans "Upload one DA6 workbook and automatically validate Blocks, Levels, Rooms and Asset Components before importing them into the system." %}
+            </p>
+
+            <div
+                class="secondary-text"
+                style="margin-top: 8px;"
+            >
+                {% trans "Supported format: .xlsx and .xlsm" %}
+            </div>
+
+        </div>
+
+        <span class="module-arrow">
+            →
+        </span>
+
+    </a>
+
+</section>
+
+
+<!-- =====================================================
+     ASSET REGISTRY MODULES
+     ===================================================== -->
+
+<section class="dashboard-section">
+
+    <div class="section-heading">
+
+        <h2>
+            {% trans "Asset Registry Modules" %}
+        </h2>
+
+        <p>
+            {% trans "Manage the complete hierarchy and supporting records of government immovable assets." %}
+        </p>
+
+    </div>
+
+
+    <div class="module-grid">
+
+
+        <!-- =================================================
+             MODULE 01
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:premise_list' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                01
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Premises" %}
+                </h3>
+
+                <p>
+                    {% trans "Register premises and DPA information." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+        <!-- =================================================
+             MODULE 02
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:block_list' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                02
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Blocks and External Structures" %}
+                </h3>
+
+                <p>
+                    {% trans "Manage buildings, blocks and external structures." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+        <!-- =================================================
+             MODULE 03
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:level_list' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                03
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Levels" %}
+                </h3>
+
+                <p>
+                    {% trans "Register and organise building levels." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+        <!-- =================================================
+             MODULE 04
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:room_list' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                04
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Rooms and Open Areas" %}
+                </h3>
+
+                <p>
+                    {% trans "Register rooms, spaces and open areas." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+        <!-- =================================================
+             MODULE 05
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:component_list' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                05
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Asset Components" %}
+                </h3>
+
+                <p>
+                    {% trans "Register components and access their asset records." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+        <!-- =================================================
+             MODULE 06
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:qr_code_list' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                06
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "QR and Asset Labels" %}
+                </h3>
+
+                <p>
+                    {% trans "Manage dynamic QR codes, printable labels and replacement history." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+        <!-- =================================================
+             MODULE 07
+             ================================================= -->
+
+        <a
+            href="{% url 'assets:drawing_list' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                07
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Drawings and Documents" %}
+                </h3>
+
+                <p>
+                    {% trans "Manage drawing files, revisions and supporting asset documents." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+<!-- =================================================
+     MODULE 08
+     ================================================= -->
+
+<a
+    href="{% url 'assets:maintenance_dashboard' %}"
+    class="module-card"
+>
+
+    <div class="module-icon">
+        08
+    </div>
+
+    <div class="module-content">
+
+        <h3>
+            {% trans "Maintenance & Complaints" %}
+        </h3>
+
+        <p>
+            {% trans "Monitor maintenance requests, complaints and repair progress." %}
+        </p>
+
+    </div>
+
+    <span class="module-arrow">
+        →
+    </span>
+
+</a>
+
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     MODULE 09
+     ===================================================== -->
+
+<section class="dashboard-section">
+
+    <div class="module-grid">
+
+        <a
+            href="{% url 'assets:reports_dashboard' %}"
+            class="module-card"
+        >
+
+            <div class="module-icon">
+                09
+            </div>
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Reports and Handover" %}
+                </h3>
+
+                <p>
+                    {% trans "Generate asset reports, maintenance summaries and project handover records." %}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+{% endblock %}

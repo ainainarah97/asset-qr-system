@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+{{ component.name }} | Asset QR System
+</title>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    padding: 20px;
+
+    background: #f8fafc;
+
+    color: #1e293b;
+
+    font-family:
+    "Inter",
+    Arial,
+    sans-serif;
+
+}
+
+
+
+.container {
+
+    width: 100%;
+
+    max-width: 750px;
+
+    margin: auto;
+
+}
+
+
+
+/* =========================
+HEADER
+========================= */
+
+.header {
+
+    padding: 28px;
+
+    background: #0F8F87;
+
+    color: white;
+
+    border-radius:
+    16px 16px 0 0;
+
+    text-align: center;
+
+}
+
+
+
+.header h1 {
+
+    margin: 0 0 8px;
+
+    font-size: 26px;
+
+}
+
+
+
+.header p {
+
+    margin: 0;
+
+    opacity: 0.95;
+
+    font-size: 14px;
+
+}
+
+
+
+
+
+/* =========================
+CARD
+========================= */
+
+
+.card {
+
+    padding: 28px;
+
+    background: white;
+
+    border-radius:
+    0 0 16px 16px;
+
+    box-shadow:
+    0 8px 30px rgba(
+        15,
+        143,
+        135,
+        0.08
+    );
+
+}
+
+
+
+
+
+/* =========================
+BADGES
+========================= */
+
+
+.status {
+
+    display: inline-block;
+
+    margin-bottom: 20px;
+
+    padding: 7px 14px;
+
+    background: #d9f2ef;
+
+    color: #0F716B;
+
+    border-radius: 20px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+
+.security-badge {
+
+    display: inline-block;
+
+    margin-left: 8px;
+
+    padding: 7px 14px;
+
+    background: #fef3c7;
+
+    color: #92400e;
+
+    border-radius: 20px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+
+
+
+/* =========================
+QR
+========================= */
+
+
+.qr-container {
+
+    margin: 25px 0;
+
+    text-align: center;
+
+}
+
+
+
+.qr-container img {
+
+    width: 220px;
+
+    max-width: 100%;
+
+}
+
+
+
+.qr-container p {
+
+    margin-top: 10px;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+}
+
+
+
+
+
+/* =========================
+SECTION
+========================= */
+
+
+.section-title {
+
+    margin-top: 28px;
+
+    margin-bottom: 12px;
+
+    padding-bottom: 8px;
+
+    color: #0F8F87;
+
+    border-bottom:
+    2px solid #e2e8f0;
+
+    font-size: 18px;
+
+}
+
+
+
+
+
+/* =========================
+INFORMATION
+========================= */
+
+
+.information-row {
+
+    display: grid;
+
+    grid-template-columns:
+    170px 1fr;
+
+    gap: 12px;
+
+    padding: 12px 0;
+
+    border-bottom:
+    1px solid #f1f5f9;
+
+}
+
+
+
+.label {
+
+    color: #64748b;
+
+    font-weight: 600;
+
+}
+
+
+
+.value {
+
+    overflow-wrap:
+    anywhere;
+
+}
+
+
+
+
+
+/* =========================
+RESTRICTED
+========================= */
+
+
+.restricted-message {
+
+    margin-top: 15px;
+
+    padding: 16px;
+
+    background: #fff7ed;
+
+    color: #9a3412;
+
+    border:
+    1px solid #fed7aa;
+
+    border-radius: 10px;
+
+}
+
+
+
+
+
+/* =========================
+FOOTER
+========================= */
+
+
+.footer {
+
+    margin-top: 20px;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+}
+
+
+
+
+
+/* =========================
+MOBILE
+========================= */
+
+
+@media(max-width:520px){
+
+
+body {
+
+    padding: 12px;
+
+}
+
+
+
+.header,
+.card {
+
+    padding: 20px;
+
+}
+
+
+
+.information-row {
+
+    grid-template-columns: 1fr;
+
+    gap: 5px;
+
+}
+
+
+
+.security-badge {
+
+    margin-left: 0;
+
+    margin-top: 8px;
+
+}
+
+
+}
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+<main class="container">
+
+
+
+<header class="header">
+
+<h1>
+Government Asset Information
+</h1>
+
+
+<p>
+QR Component Record
+</p>
+
+
+</header>
+
+
+
+
+<section class="card">
+
+
+
+<div class="status">
+
+{{ component.get_status_display }}
+
+</div>
+
+
+
+<div class="security-badge">
+
+{{ component.get_security_level_display }}
+
+</div>
+
+
+
+
+<h2>
+{{ component.name }}
+</h2>
+
+
+
+
+
+<div class="qr-container">
+
+
+<img
+
+src="{% url 'assets:component_qr_code' component.public_id %}"
+
+alt="QR code for {{ component.component_id }}"
+
+>
+
+
+<p>
+Scan this QR code to view the component information.
+</p>
+
+
+</div>
+
+
+
+
+
+
+<h3 class="section-title">
+Basic Information
+</h3>
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Component ID
+</div>
+
+<div class="value">
+{{ component.component_id }}
+</div>
+
+</div>
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Component Name
+</div>
+
+<div class="value">
+{{ component.name }}
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Component Code
+</div>
+
+<div class="value">
+
+{{ component.component_code|default:"Not provided" }}
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Discipline
+</div>
+
+<div class="value">
+
+{{ component.get_discipline_display }}
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+System
+</div>
+
+<div class="value">
+
+{{ component.system }}
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Subsystem
+</div>
+
+<div class="value">
+
+{{ component.subsystem|default:"Not provided" }}
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+{% if can_view_details %}
+
+
+
+<h3 class="section-title">
+Location
+</h3>
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Premise
+</div>
+
+<div class="value">
+
+{{ component.room.level.block.premise.name }}
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Block
+</div>
+
+<div class="value">
+
+{{ component.room.level.block.code }}
+
+-
+
+{{ component.room.level.block.name }}
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Level
+</div>
+
+<div class="value">
+
+{{ component.room.level.code }}
+
+-
+
+{{ component.room.level.name }}
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Room
+</div>
+
+<div class="value">
+
+{{ component.room.room_tag }}
+
+-
+
+{{ component.room.name }}
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+<h3 class="section-title">
+Equipment Details
+</h3>
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Brand
+</div>
+
+<div class="value">
+
+{{ component.brand|default:"Not provided" }}
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Model
+</div>
+
+<div class="value">
+
+{{ component.model|default:"Not provided" }}
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Serial Number
+</div>
+
+<div class="value">
+
+{{ component.serial_number|default:"Not provided" }}
+
+</div>
+
+</div>
+
+
+
+
+
+<div class="information-row">
+
+<div class="label">
+Installation Date
+</div>
+
+
+<div class="value">
+
+
+{% if component.installation_date %}
+
+{{ component.installation_date|date:"d M Y" }}
+
+
+{% else %}
+
+Not provided
+
+
+{% endif %}
+
+
+</div>
+
+</div>
+
+
+
+
+{% else %}
+
+
+
+<h3 class="section-title">
+
+Restricted Information
+
+</h3>
+
+
+
+<div class="restricted-message">
+
+Detailed location, equipment and technical information requires an authorised login.
+
+</div>
+
+
+
+{% endif %}
+
+
+
+</section>
+
+
+
+
+
+<footer class="footer">
+
+Asset QR System |
+Government Immovable Asset Information
+
+</footer>
+
+
+
+
+</main>
+
+
+
+</body>
+
+
+</html>

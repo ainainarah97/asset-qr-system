@@ -1,0 +1,748 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Maintenance Dashboard" %} | AssetGuard
+{% endblock %}
+
+
+{% block content %}
+
+<section class="dashboard-section">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="section-heading maintenance-page-heading">
+
+        <div>
+
+            <h2>
+                {% trans "Maintenance & Complaints Dashboard" %}
+            </h2>
+
+            <p>
+                {% trans "Monitor maintenance requests, complaints and repair progress." %}
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ACTION BUTTONS
+         ===================================================== -->
+
+    <div class="maintenance-header-actions">
+
+        <a
+            href="{% url 'assets:maintenance_request_create' %}"
+            class="maintenance-primary-btn"
+        >
+            <span class="button-symbol">
+                +
+            </span>
+
+            {% trans "New Maintenance Request" %}
+        </a>
+
+
+        <a
+            href="{% url 'assets:maintenance_request_list' %}"
+            class="maintenance-secondary-btn"
+        >
+            {% trans "View All Requests" %}
+        </a>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+         ===================================================== -->
+
+    <div class="module-grid">
+
+
+        <!-- OPEN REQUESTS -->
+
+        <a
+            href="{% url 'assets:maintenance_request_list' %}?status=submitted"
+            class="module-card"
+        >
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Open Requests" %}
+                </h3>
+
+                <p class="maintenance-card-count">
+                    {{ total_open }}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+
+        <!-- ASSIGNED -->
+
+        <a
+            href="{% url 'assets:maintenance_request_list' %}?status=assigned"
+            class="module-card"
+        >
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Assigned" %}
+                </h3>
+
+                <p class="maintenance-card-count">
+                    {{ total_assigned }}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+
+        <!-- IN PROGRESS -->
+
+        <a
+            href="{% url 'assets:maintenance_request_list' %}?status=in_progress"
+            class="module-card"
+        >
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "In Progress" %}
+                </h3>
+
+                <p class="maintenance-card-count">
+                    {{ total_progress }}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+
+        <!-- COMPLETED -->
+
+        <a
+            href="{% url 'assets:maintenance_request_list' %}?status=completed"
+            class="module-card"
+        >
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Completed" %}
+                </h3>
+
+                <p class="maintenance-card-count">
+                    {{ total_completed }}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+
+        <!-- CRITICAL -->
+
+        <a
+            href="{% url 'assets:maintenance_request_list' %}?priority=critical&active=1"
+            class="module-card"
+        >
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Critical" %}
+                </h3>
+
+                <p class="maintenance-card-count">
+                    {{ total_critical }}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+
+        <!-- CLOSED -->
+
+        <a
+            href="{% url 'assets:maintenance_request_list' %}?status=closed"
+            class="module-card"
+        >
+
+            <div class="module-content">
+
+                <h3>
+                    {% trans "Closed" %}
+                </h3>
+
+                <p class="maintenance-card-count">
+                    {{ total_closed }}
+                </p>
+
+            </div>
+
+            <span class="module-arrow">
+                →
+            </span>
+
+        </a>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         RECENT REQUESTS
+         ===================================================== -->
+
+    <div class="recent-requests-section">
+
+        <div class="section-heading">
+
+            <h2>
+                {% trans "Recent Requests" %}
+            </h2>
+
+        </div>
+
+
+        <div class="table-card">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            {% trans "Request No" %}
+                        </th>
+
+                        <th>
+                            {% trans "Location" %}
+                        </th>
+
+                        <th>
+                            {% trans "Priority" %}
+                        </th>
+
+                        <th>
+                            {% trans "Status" %}
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in recent_requests %}
+
+                        <tr>
+
+
+                            <!-- REQUEST NO -->
+
+                            <td>
+
+                                <a
+                                    href="{% url 'assets:maintenance_request_detail' item.id %}"
+                                    class="maintenance-request-link"
+                                >
+                                    {{ item.request_no }}
+                                </a>
+
+                            </td>
+
+
+
+                            <!-- LOCATION -->
+
+                            <td>
+
+                                <strong>
+                                    {{ item.premise.name }}
+                                </strong>
+
+                                {% if item.room %}
+
+                                    <div class="maintenance-secondary-text">
+                                        {{ item.room.room_tag }}
+                                        -
+                                        {{ item.room.name }}
+                                    </div>
+
+                                {% elif item.level %}
+
+                                    <div class="maintenance-secondary-text">
+                                        {{ item.level.code }}
+                                        -
+                                        {{ item.level.name }}
+                                    </div>
+
+                                {% elif item.block %}
+
+                                    <div class="maintenance-secondary-text">
+                                        {{ item.block.code }}
+                                        -
+                                        {{ item.block.name }}
+                                    </div>
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <!-- PRIORITY -->
+
+                            <td>
+
+                                {% if item.priority == "critical" %}
+
+                                    <span class="maintenance-badge priority-critical">
+                                        {{ item.get_priority_display }}
+                                    </span>
+
+                                {% elif item.priority == "high" %}
+
+                                    <span class="maintenance-badge priority-high">
+                                        {{ item.get_priority_display }}
+                                    </span>
+
+                                {% elif item.priority == "medium" %}
+
+                                    <span class="maintenance-badge priority-medium">
+                                        {{ item.get_priority_display }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="maintenance-badge priority-low">
+                                        {{ item.get_priority_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                {% if item.status == "completed" or item.status == "closed" %}
+
+                                    <span class="maintenance-badge status-complete">
+                                        {{ item.get_status_display }}
+                                    </span>
+
+                                {% elif item.status == "in_progress" %}
+
+                                    <span class="maintenance-badge status-progress">
+                                        {{ item.get_status_display }}
+                                    </span>
+
+                                {% elif item.status == "rejected" %}
+
+                                    <span class="maintenance-badge status-rejected">
+                                        {{ item.get_status_display }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="maintenance-badge status-default">
+                                        {{ item.get_status_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                        </tr>
+
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="maintenance-empty-row"
+                            >
+                                {% trans "No maintenance requests yet." %}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</section>
+
+
+
+<style>
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.maintenance-page-heading {
+    margin-bottom: 0;
+}
+
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.maintenance-header-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 20px;
+    margin-bottom: 28px;
+
+}
+
+
+.maintenance-primary-btn,
+.maintenance-secondary-btn {
+
+    min-width: 190px;
+    height: 44px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.maintenance-primary-btn {
+
+    background: #0F8F87;
+    color: #ffffff;
+
+    border: 1px solid #0F8F87;
+
+}
+
+
+.maintenance-primary-btn:hover {
+
+    background: #0B716B;
+
+    transform: translateY(-1px);
+
+}
+
+
+.maintenance-secondary-btn {
+
+    background: #ffffff;
+    color: #0f172a;
+
+    border: 1px solid #cbd5e1;
+
+}
+
+
+.maintenance-secondary-btn:hover {
+
+    background: #f8fafc;
+
+    border-color: #94a3b8;
+
+}
+
+
+.button-symbol {
+
+    font-size: 18px;
+
+    font-weight: 500;
+
+    line-height: 1;
+
+}
+
+
+
+/* =========================================================
+   SUMMARY COUNTS
+   ========================================================= */
+
+.maintenance-card-count {
+
+    margin: 14px 0 0;
+
+    color: #64748b;
+
+    font-size: 26px;
+
+    font-weight: 700;
+
+}
+
+
+
+/* =========================================================
+   RECENT REQUESTS
+   ========================================================= */
+
+.recent-requests-section {
+
+    margin-top: 30px;
+
+}
+
+
+.maintenance-request-link {
+
+    color: #0B716B;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+}
+
+
+.maintenance-request-link:hover {
+
+    text-decoration: underline;
+
+}
+
+
+.maintenance-secondary-text {
+
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+}
+
+
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.maintenance-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 6px 11px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    white-space: nowrap;
+
+}
+
+
+/* PRIORITY */
+
+.priority-critical {
+
+    background: #fee2e2;
+    color: #991b1b;
+
+}
+
+
+.priority-high {
+
+    background: #ffedd5;
+    color: #9a3412;
+
+}
+
+
+.priority-medium {
+
+    background: #fef3c7;
+    color: #92400e;
+
+}
+
+
+.priority-low {
+
+    background: #D9F2EF;
+    color: #08766f;
+
+}
+
+
+/* STATUS */
+
+.status-complete {
+
+    background: #dcfce7;
+    color: #166534;
+
+}
+
+
+.status-progress {
+
+    background: #D9F2EF;
+    color: #08766f;
+
+}
+
+
+.status-rejected {
+
+    background: #fee2e2;
+    color: #991b1b;
+
+}
+
+
+.status-default {
+
+    background: #f1f5f9;
+    color: #475569;
+
+}
+
+
+
+/* =========================================================
+   EMPTY TABLE
+   ========================================================= */
+
+.maintenance-empty-row {
+
+    padding: 30px !important;
+
+    color: #64748b;
+
+    text-align: center;
+
+}
+
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .maintenance-header-actions {
+
+        align-items: stretch;
+
+        flex-direction: column;
+
+    }
+
+
+    .maintenance-primary-btn,
+    .maintenance-secondary-btn {
+
+        width: 100%;
+
+    }
+
+}
+
+</style>
+
+
+{% endblock %}

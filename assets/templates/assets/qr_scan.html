@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {{ qr.qr_id }} | Government Asset Information
+    </title>
+
+
+    <style>
+
+        :root {
+            --primary: #0F8F87;
+            --primary-dark: #0B716B;
+            --primary-soft: #D9F2EF;
+
+            --background: #f8fafc;
+            --surface: #ffffff;
+
+            --border: #e2e8f0;
+
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            padding: 20px;
+
+            background: var(--background);
+            color: var(--text-primary);
+
+            font-family: Arial, sans-serif;
+        }
+
+
+        .container {
+            width: 100%;
+            max-width: 760px;
+
+            margin: 0 auto;
+        }
+
+
+        .header {
+            padding: 26px;
+
+            background: var(--primary);
+            color: white;
+
+            border-radius: 14px 14px 0 0;
+
+            text-align: center;
+        }
+
+
+        .header h1 {
+            margin: 0 0 8px;
+
+            font-size: 27px;
+        }
+
+
+        .header p {
+            margin: 0;
+
+            opacity: 0.9;
+        }
+
+
+        .card {
+            padding: 26px;
+
+            background: var(--surface);
+
+            border-radius: 0 0 14px 14px;
+
+            box-shadow:
+                0 8px 24px
+                rgba(15, 143, 135, 0.12);
+        }
+
+
+        .badge {
+            display: inline-block;
+
+            margin-bottom: 18px;
+
+            padding: 7px 13px;
+
+            background: var(--primary-soft);
+            color: var(--primary-dark);
+
+            border-radius: 20px;
+
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+
+        .asset-title {
+            margin: 6px 0 20px;
+
+            color: var(--primary-dark);
+
+            font-size: 25px;
+        }
+
+
+        .section-title {
+            margin: 28px 0 12px;
+
+            padding-bottom: 8px;
+
+            color: var(--primary-dark);
+
+            border-bottom: 2px solid var(--border);
+
+            font-size: 18px;
+        }
+
+
+        .information-row {
+            display: grid;
+
+            grid-template-columns: 170px 1fr;
+
+            gap: 14px;
+
+            padding: 11px 0;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+
+        .label {
+            color: var(--text-secondary);
+
+            font-weight: bold;
+        }
+
+
+        .asset-list {
+            margin: 0;
+            padding: 0;
+
+            list-style: none;
+        }
+
+
+        .asset-item {
+            margin-bottom: 10px;
+
+            padding: 15px;
+
+            background: #f8fafc;
+
+            border: 1px solid var(--border);
+            border-radius: 9px;
+        }
+
+
+        .asset-item strong {
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: var(--primary-dark);
+        }
+
+
+        .secondary-text {
+            color: var(--text-secondary);
+
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+
+        /* ===============================
+           SUCCESS
+           =============================== */
+
+        .success-notice {
+            margin-bottom: 22px;
+
+            padding: 15px 17px;
+
+            background: #ecfdf5;
+            color: #065f46;
+
+            border: 1px solid #a7f3d0;
+            border-radius: 9px;
+
+            line-height: 1.6;
+        }
+
+
+        /* ===============================
+           STAFF NOTICE
+           =============================== */
+
+        .staff-notice {
+            margin-top: 25px;
+
+            padding: 18px;
+
+            background: #f8fafc;
+
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+
+        .staff-notice h3 {
+            margin: 0 0 7px;
+
+            color: var(--primary-dark);
+
+            font-size: 16px;
+        }
+
+
+        .staff-notice p {
+            margin: 0 0 14px;
+
+            color: var(--text-secondary);
+
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+
+        .staff-login-button {
+            display: inline-flex;
+
+            padding: 10px 16px;
+
+            background: white;
+            color: var(--primary);
+
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+
+            font-size: 14px;
+            font-weight: bold;
+
+            text-decoration: none;
+        }
+
+
+        .staff-login-button:hover {
+            background: var(--primary-soft);
+        }
+
+
+        /* ===============================
+           STAFF INFORMATION
+           =============================== */
+
+        .staff-section {
+            margin-top: 28px;
+
+            padding: 20px;
+
+            background: #f8fafc;
+
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+
+        .staff-section-header {
+            margin-bottom: 16px;
+        }
+
+
+        .staff-section-header h3 {
+            margin: 0 0 5px;
+
+            color: var(--primary-dark);
+        }
+
+
+        .staff-section-header p {
+            margin: 0;
+
+            color: var(--text-secondary);
+
+            font-size: 13px;
+        }
+
+
+        /* ===============================
+           REPORT ISSUE
+           =============================== */
+
+        .report-section {
+            margin-top: 30px;
+
+            padding-top: 24px;
+
+            border-top: 1px solid var(--border);
+        }
+
+
+        .report-section h3 {
+            margin: 0 0 8px;
+
+            color: var(--primary-dark);
+
+            font-size: 18px;
+        }
+
+
+        .report-section p {
+            margin: 0 0 16px;
+
+            color: var(--text-secondary);
+
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+
+        .report-button {
+            display: flex;
+
+            width: 100%;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 14px 20px;
+
+            background: var(--primary);
+            color: white;
+
+            border-radius: 9px;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            text-decoration: none;
+        }
+
+
+        .report-button:hover {
+            background: var(--primary-dark);
+        }
+
+
+        .report-help {
+            margin-top: 10px;
+
+            color: var(--text-secondary);
+
+            text-align: center;
+
+            font-size: 13px;
+        }
+
+
+        .footer {
+            margin-top: 20px;
+
+            color: var(--text-secondary);
+
+            text-align: center;
+
+            font-size: 13px;
+        }
+
+
+        @media (max-width: 550px) {
+
+            body {
+                padding: 10px;
+            }
+
+
+            .header,
+            .card {
+                padding: 20px;
+            }
+
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+
+            .asset-title {
+                font-size: 21px;
+            }
+
+
+            .information-row {
+                grid-template-columns: 1fr;
+
+                gap: 4px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<main class="container">
+
+
+    <header class="header">
+
+        <h1>
+            Government Asset Information
+        </h1>
+
+        <p>
+            Dynamic QR Asset Record
+        </p>
+
+    </header>
+
+
+
+    <section class="card">
+
+
+        <span class="badge">
+            {{ qr.get_qr_type_display }}
+        </span>
+
+
+        {% if reported_request_no %}
+
+            <div class="success-notice">
+
+                Maintenance request
+
+                <strong>
+                    {{ reported_request_no }}
+                </strong>
+
+                has been submitted successfully.
+
+            </div>
+
+        {% endif %}
+
+
+
+        <!-- =========================================
+             PUBLIC INFORMATION
+             ========================================= -->
+
+
+        <h3 class="section-title">
+            Public Asset Information
+        </h3>
+
+
+        <div class="information-row">
+
+            <div class="label">
+                QR ID
+            </div>
+
+            <div>
+                {{ qr.qr_id }}
+            </div>
+
+        </div>
+
+
+
+        <!-- PREMISE -->
+
+        {% if qr.qr_type == "premise" and qr.premise %}
+
+            <h2 class="asset-title">
+                {{ qr.premise.name }}
+            </h2>
+
+            <div class="information-row">
+
+                <div class="label">
+                    Asset Type
+                </div>
+
+                <div>
+                    Government Premise
+                </div>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    State
+                </div>
+
+                <div>
+                    {{ qr.premise.state|default:"-" }}
+                </div>
+
+            </div>
+
+
+
+        <!-- BLOCK -->
+
+        {% elif qr.qr_type == "block" and qr.block %}
+
+            <h2 class="asset-title">
+
+                {{ qr.block.code }}
+                —
+                {{ qr.block.name }}
+
+            </h2>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    Premise
+                </div>
+
+                <div>
+                    {{ qr.block.premise.name }}
+                </div>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    Asset Type
+                </div>
+
+                <div>
+                    {{ qr.block.get_structure_type_display }}
+                </div>
+
+            </div>
+
+
+
+        <!-- LEVEL -->
+
+        {% elif qr.qr_type == "level" and qr.level %}
+
+            <h2 class="asset-title">
+
+                {{ qr.level.block.code }}.{{ qr.level.code }}
+                —
+                {{ qr.level.name }}
+
+            </h2>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    Premise
+                </div>
+
+                <div>
+                    {{ qr.level.block.premise.name }}
+                </div>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    Asset Type
+                </div>
+
+                <div>
+                    Building Level
+                </div>
+
+            </div>
+
+
+
+        <!-- ROOM -->
+
+        {% elif qr.qr_type == "room" and qr.room %}
+
+            <h2 class="asset-title">
+
+                {{ qr.room.room_tag }}
+                —
+                {{ qr.room.name }}
+
+            </h2>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    Premise
+                </div>
+
+                <div>
+                    {{ qr.room.level.block.premise.name }}
+                </div>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    Space Type
+                </div>
+
+                <div>
+                    {{ qr.room.get_space_type_display }}
+                </div>
+
+            </div>
+
+
+
+        <!-- COMPONENT -->
+
+        {% elif qr.qr_type == "component" and qr.component %}
+
+            <h2 class="asset-title">
+                {{ qr.component.name }}
+            </h2>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    Component ID
+                </div>
+
+                <div>
+                    {{ qr.component.component_id }}
+                </div>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    Premise
+                </div>
+
+                <div>
+                    {{ qr.component.room.level.block.premise.name }}
+                </div>
+
+            </div>
+
+
+            <div class="information-row">
+
+                <div class="label">
+                    Status
+                </div>
+
+                <div>
+                    {{ qr.component.get_status_display }}
+                </div>
+
+            </div>
+
+
+
+        {% else %}
+
+            <div class="staff-notice">
+                This QR record is not connected to a valid asset.
+            </div>
+
+        {% endif %}
+
+
+
+
+
+        <!-- =========================================
+             AUTHENTICATED STAFF ONLY
+             ========================================= -->
+
+
+        {% if request.user.is_authenticated %}
+
+
+            <div class="staff-section">
+
+
+                <div class="staff-section-header">
+
+                    <h3>
+                        Authorised Staff Information
+                    </h3>
+
+                    <p>
+                        Additional asset information is visible
+                        because you are signed in.
+                    </p>
+
+                </div>
+
+
+
+                <!-- PREMISE DETAILS -->
+
+                {% if qr.qr_type == "premise" and qr.premise %}
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            DPA Number
+                        </div>
+
+                        <div>
+                            {{ qr.premise.dpa_number|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Ministry
+                        </div>
+
+                        <div>
+                            {{ qr.premise.ministry|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Department
+                        </div>
+
+                        <div>
+                            {{ qr.premise.department|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Address
+                        </div>
+
+                        <div>
+                            {{ qr.premise.address|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <h3 class="section-title">
+                        Buildings and External Structures
+                    </h3>
+
+
+                    <ul class="asset-list">
+
+                        {% for block in qr.premise.blocks.all %}
+
+                            <li class="asset-item">
+
+                                <strong>
+                                    {{ block.code }}
+                                    —
+                                    {{ block.name }}
+                                </strong>
+
+                                <div class="secondary-text">
+
+                                    Structure:
+                                    {{ block.get_structure_type_display }}
+
+                                </div>
+
+                                <div class="secondary-text">
+
+                                    Status:
+                                    {{ block.get_status_display }}
+
+                                </div>
+
+                            </li>
+
+                        {% empty %}
+
+                            <li class="asset-item">
+                                No structures registered.
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+
+
+                <!-- BLOCK DETAILS -->
+
+                {% elif qr.qr_type == "block" and qr.block %}
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Function
+                        </div>
+
+                        <div>
+                            {{ qr.block.function|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Security Level
+                        </div>
+
+                        <div>
+                            {{ qr.block.get_security_level_display }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Status
+                        </div>
+
+                        <div>
+                            {{ qr.block.get_status_display }}
+                        </div>
+
+                    </div>
+
+
+                    <h3 class="section-title">
+                        Levels
+                    </h3>
+
+
+                    <ul class="asset-list">
+
+                        {% for level in qr.block.levels.all %}
+
+                            <li class="asset-item">
+
+                                <strong>
+
+                                    {{ qr.block.code }}.{{ level.code }}
+                                    —
+                                    {{ level.name }}
+
+                                </strong>
+
+                                <div class="secondary-text">
+
+                                    Rooms:
+                                    {{ level.rooms.count }}
+
+                                </div>
+
+                            </li>
+
+                        {% empty %}
+
+                            <li class="asset-item">
+                                No levels registered.
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+
+
+                <!-- LEVEL DETAILS -->
+
+                {% elif qr.qr_type == "level" and qr.level %}
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Block
+                        </div>
+
+                        <div>
+
+                            {{ qr.level.block.code }}
+                            —
+                            {{ qr.level.block.name }}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Sequence
+                        </div>
+
+                        <div>
+                            {{ qr.level.sequence }}
+                        </div>
+
+                    </div>
+
+
+                    <h3 class="section-title">
+                        Rooms and Open Areas
+                    </h3>
+
+
+                    <ul class="asset-list">
+
+                        {% for room in qr.level.rooms.all %}
+
+                            <li class="asset-item">
+
+                                <strong>
+
+                                    {{ room.room_tag }}
+                                    —
+                                    {{ room.name }}
+
+                                </strong>
+
+                                <div class="secondary-text">
+
+                                    Space:
+                                    {{ room.get_space_type_display }}
+
+                                </div>
+
+                                <div class="secondary-text">
+
+                                    Components:
+                                    {{ room.components.count }}
+
+                                </div>
+
+                            </li>
+
+                        {% empty %}
+
+                            <li class="asset-item">
+                                No rooms registered.
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+
+
+                <!-- ROOM DETAILS -->
+
+                {% elif qr.qr_type == "room" and qr.room %}
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Block
+                        </div>
+
+                        <div>
+
+                            {{ qr.room.level.block.code }}
+                            —
+                            {{ qr.room.level.block.name }}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Level
+                        </div>
+
+                        <div>
+
+                            {{ qr.room.level.code }}
+                            —
+                            {{ qr.room.level.name }}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Function
+                        </div>
+
+                        <div>
+                            {{ qr.room.function_name|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Security Level
+                        </div>
+
+                        <div>
+                            {{ qr.room.get_security_level_display }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Area
+                        </div>
+
+                        <div>
+
+                            {% if qr.room.area %}
+                                {{ qr.room.area }} m²
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <h3 class="section-title">
+                        Components
+                    </h3>
+
+
+                    <ul class="asset-list">
+
+                        {% for component in qr.room.components.all %}
+
+                            <li class="asset-item">
+
+                                <strong>
+
+                                    {{ component.component_id }}
+                                    —
+                                    {{ component.name }}
+
+                                </strong>
+
+                                <div class="secondary-text">
+
+                                    System:
+                                    {{ component.system|default:"-" }}
+
+                                </div>
+
+                                <div class="secondary-text">
+
+                                    Status:
+                                    {{ component.get_status_display }}
+
+                                </div>
+
+                            </li>
+
+                        {% empty %}
+
+                            <li class="asset-item">
+                                No components registered.
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+
+
+                <!-- COMPONENT DETAILS -->
+
+                {% elif qr.qr_type == "component" and qr.component %}
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Component Code
+                        </div>
+
+                        <div>
+                            {{ qr.component.component_code|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Location
+                        </div>
+
+                        <div>
+
+                            {{ qr.component.room.level.block.code }}
+                            /
+                            {{ qr.component.room.level.code }}
+                            /
+                            {{ qr.component.room.room_tag }}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Discipline
+                        </div>
+
+                        <div>
+                            {{ qr.component.get_discipline_display }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            System
+                        </div>
+
+                        <div>
+                            {{ qr.component.system|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Subsystem
+                        </div>
+
+                        <div>
+                            {{ qr.component.subsystem|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Brand
+                        </div>
+
+                        <div>
+                            {{ qr.component.brand|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Model
+                        </div>
+
+                        <div>
+                            {{ qr.component.model|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Serial Number
+                        </div>
+
+                        <div>
+                            {{ qr.component.serial_number|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Installation Date
+                        </div>
+
+                        <div>
+
+                            {% if qr.component.installation_date %}
+
+                                {{ qr.component.installation_date|date:"d M Y" }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Warranty End Date
+                        </div>
+
+                        <div>
+
+                            {% if qr.component.warranty_expiry %}
+
+                                {{ qr.component.warranty_expiry|date:"d M Y" }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="information-row">
+
+                        <div class="label">
+                            Security Level
+                        </div>
+
+                        <div>
+                            {{ qr.component.get_security_level_display }}
+                        </div>
+
+                    </div>
+
+
+                {% endif %}
+
+
+            </div>
+
+        <!-- =========================================
+            RELATED DRAWINGS
+            STAFF ONLY
+            ========================================= -->
+
+        <div class="staff-section">
+
+            <div class="staff-section-header">
+
+                <h3>
+                    Related Drawings
+                </h3>
+
+                <p>
+                    Drawings directly linked to this scanned asset or location.
+                </p>
+
+            </div>
+
+
+            {% if related_drawings %}
+
+                <ul class="asset-list">
+
+                    {% for drawing in related_drawings %}
+
+                        <li class="asset-item">
+
+                            <strong>
+                                {{ drawing.drawing_number }}
+                                —
+                                {{ drawing.title }}
+                            </strong>
+
+                            <div class="secondary-text">
+                                Type:
+                                {{ drawing.get_drawing_type_display }}
+                            </div>
+
+                            <div class="secondary-text">
+                                Revision:
+                                Rev {{ drawing.revision }}
+                            </div>
+
+                            <div class="secondary-text">
+                                Status:
+                                {{ drawing.get_status_display }}
+                            </div>
+
+                            {% if drawing.file %}
+
+                                <div style="margin-top: 10px;">
+
+                                    <a
+                                        href="{% url 'assets:drawing_download' drawing.id %}"
+                                        class="staff-login-button"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        View Drawing
+                                    </a>
+
+                                </div>
+
+                            {% endif %}
+
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <div class="secondary-text">
+                    No drawings are directly linked to this asset or location.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- =========================================
+            RELATED DOCUMENTS
+            STAFF ONLY
+            ========================================= -->
+
+        <div class="staff-section">
+
+            <div class="staff-section-header">
+
+                <h3>
+                    Related Documents
+                </h3>
+
+                <p>
+                    Manuals, warranties, certificates and supporting documents
+                    linked to this scanned asset or location.
+                </p>
+
+            </div>
+
+
+            {% if related_documents %}
+
+                <ul class="asset-list">
+
+                    {% for document in related_documents %}
+
+                        <li class="asset-item">
+
+                            <strong>
+                                {{ document.document_number }}
+                                —
+                                {{ document.title }}
+                            </strong>
+
+                            <div class="secondary-text">
+                                Type:
+                                {{ document.get_document_type_display }}
+                            </div>
+
+                            {% if document.issue_date %}
+
+                                <div class="secondary-text">
+                                    Issued:
+                                    {{ document.issue_date|date:"d M Y" }}
+                                </div>
+
+                            {% endif %}
+
+                            {% if document.expiry_date %}
+
+                                <div class="secondary-text">
+                                    Expiry:
+                                    {{ document.expiry_date|date:"d M Y" }}
+                                </div>
+
+                            {% endif %}
+
+                            <div class="secondary-text">
+                                Status:
+                                {{ document.get_status_display }}
+                            </div>
+
+                            {% if document.file %}
+
+                                <div style="margin-top: 10px;">
+
+                                    <a
+                                        href="{% url 'assets:asset_document_download' document.id %}"
+                                        class="staff-login-button"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        View Document
+                                    </a>
+
+                                </div>
+
+                            {% endif %}
+
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <div class="secondary-text">
+                    No documents are directly linked to this asset or location.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        {% else %}
+
+
+            <div class="staff-notice">
+
+                <h3>
+                    Authorised Staff Access
+                </h3>
+
+                <p>
+                    Technical asset information, drawings,
+                    documents and maintenance records are restricted
+                    to authorised personnel.
+                </p>
+
+
+                <a
+                    href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}"
+                    class="staff-login-button"
+                >
+                    Staff Sign In
+                </a>
+
+            </div>
+
+
+        {% endif %}
+
+
+
+
+
+        <!-- =========================================
+             PUBLIC MAINTENANCE REPORT
+             ========================================= -->
+
+
+        <div class="report-section">
+
+            <h3>
+                Maintenance or Complaint
+            </h3>
+
+
+            <p>
+                Found a problem with this asset or location?
+                Submit a maintenance request without signing in.
+            </p>
+
+
+            <a
+                href="{% url 'assets:maintenance_report_from_qr' qr.public_id %}"
+                class="report-button"
+            >
+                Report an Issue
+            </a>
+
+
+            <div class="report-help">
+
+                The correct asset and location will be
+                automatically attached to the report.
+
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <footer class="footer">
+
+        Government Immovable Asset Information System
+
+    </footer>
+
+
+</main>
+
+
+</body>
+
+</html>

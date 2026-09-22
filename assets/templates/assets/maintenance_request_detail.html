@@ -1,0 +1,333 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+{{ maintenance_request.request_no }} | AssetGuard
+{% endblock %}
+
+{% block content %}
+
+
+<section class="dashboard-section">
+
+    <div class="section-heading">
+
+        <h2>
+            {{ maintenance_request.request_no }}
+        </h2>
+
+        <p>
+            {% trans "Maintenance request details and current work status." %}
+        </p>
+
+    </div>
+
+
+    <!-- ==============================================
+         LOCATION
+         ============================================== -->
+
+    <div class="detail-card">
+
+        <h3>
+            {% trans "Location Information" %}
+        </h3>
+
+        <p>
+            <strong>{% trans "Premise:" %}</strong>
+            {{ maintenance_request.premise.name }}
+        </p>
+
+        <p>
+            <strong>{% trans "Block:" %}</strong>
+
+            {% if maintenance_request.block %}
+                {{ maintenance_request.block.code }}
+                -
+                {{ maintenance_request.block.name }}
+            {% else %}
+                -
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>{% trans "Level:" %}</strong>
+
+            {% if maintenance_request.level %}
+                {{ maintenance_request.level.code }}
+                -
+                {{ maintenance_request.level.name }}
+            {% else %}
+                -
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>{% trans "Room / Area:" %}</strong>
+
+            {% if maintenance_request.room %}
+                {{ maintenance_request.room.room_tag }}
+                -
+                {{ maintenance_request.room.name }}
+            {% else %}
+                -
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>{% trans "Component:" %}</strong>
+
+            {% if maintenance_request.component %}
+                {{ maintenance_request.component.name }}
+            {% else %}
+                {% trans "Not Applicable" %}
+            {% endif %}
+        </p>
+
+    </div>
+
+
+    <!-- ==============================================
+         ISSUE
+         ============================================== -->
+
+    <div class="detail-card">
+
+        <h3>
+            {% trans "Issue Information" %}
+        </h3>
+
+        <p>
+            <strong>{% trans "Category:" %}</strong>
+            {{ maintenance_request.get_category_display }}
+        </p>
+
+        <p>
+            <strong>{% trans "Priority:" %}</strong>
+            {{ maintenance_request.get_priority_display }}
+        </p>
+
+        <p>
+            <strong>{% trans "Status:" %}</strong>
+            {{ maintenance_request.get_status_display }}
+        </p>
+
+        <p>
+            <strong>{% trans "Description:" %}</strong>
+        </p>
+
+        <p>
+            {{ maintenance_request.description }}
+        </p>
+
+    </div>
+
+
+    <!-- ==============================================
+         REPORTER
+         ============================================== -->
+
+    <div class="detail-card">
+
+        <h3>
+            {% trans "Reporter Information" %}
+        </h3>
+
+        <p>
+            <strong>{% trans "Reporter:" %}</strong>
+
+            {% if maintenance_request.reported_by %}
+                {{ maintenance_request.reported_by.username }}
+
+            {% elif maintenance_request.reporter_name %}
+                {{ maintenance_request.reporter_name }}
+
+            {% else %}
+                -
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>{% trans "Contact:" %}</strong>
+
+            {% if maintenance_request.reporter_contact %}
+                {{ maintenance_request.reporter_contact }}
+            {% else %}
+                -
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>{% trans "Reported:" %}</strong>
+            {{ maintenance_request.created_at|date:"d M Y, H:i" }}
+        </p>
+
+    </div>
+
+
+    <!-- ==============================================
+         ASSIGNMENT
+         ============================================== -->
+
+    <div class="detail-card">
+
+        <h3>
+            {% trans "Maintenance Management" %}
+        </h3>
+
+        <p>
+            <strong>{% trans "Assigned To:" %}</strong>
+
+            {% if maintenance_request.assigned_to %}
+                {{ maintenance_request.assigned_to.username }}
+            {% else %}
+                {% trans "Not Assigned" %}
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>{% trans "Remarks:" %}</strong>
+
+            {% if maintenance_request.remarks %}
+                {{ maintenance_request.remarks }}
+            {% else %}
+                -
+            {% endif %}
+        </p>
+
+    </div>
+
+
+    <!-- ==============================================
+         ACTIONS
+         ============================================== -->
+
+    <div
+        style="
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        "
+    >
+
+        <a
+            href="{% url 'assets:maintenance_request_list' %}"
+            class="btn-secondary"
+        >
+            ← {% trans "Back to Requests" %}
+        </a>
+
+
+        {% if maintenance_request.status == "submitted" %}
+
+    <form
+        method="post"
+        action="{% url 'assets:maintenance_request_assign' maintenance_request.id %}"
+        style="
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        "
+    >
+
+        {% csrf_token %}
+
+        <select
+            name="technician"
+            required
+            style="
+                min-width: 220px;
+                padding: 10px 12px;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+            "
+        >
+
+            <option value="">
+                {% trans "Select Technician" %}
+            </option>
+
+            {% for technician in technicians %}
+
+                <option value="{{ technician.id }}">
+                    {{ technician.username }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <button
+            type="submit"
+            class="btn-primary"
+        >
+            {% trans "Assign Technician" %}
+        </button>
+
+    </form>
+
+        {% elif maintenance_request.status == "assigned" %}
+
+    <form
+        method="post"
+        action="{% url 'assets:maintenance_request_start' maintenance_request.id %}"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="btn-primary"
+        >
+            {% trans "Start Work" %}
+        </button>
+
+    </form>
+
+        {% elif maintenance_request.status == "in_progress" %}
+
+    <form
+        method="post"
+        action="{% url 'assets:maintenance_request_complete' maintenance_request.id %}"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="btn-primary"
+        >
+            {% trans "Mark Completed" %}
+        </button>
+
+    </form>
+
+        {% elif maintenance_request.status == "completed" %}
+
+    <form
+        method="post"
+        action="{% url 'assets:maintenance_request_close' maintenance_request.id %}"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="btn-primary"
+        >
+            {% trans "Close Request" %}
+        </button>
+
+    </form>
+
+    {% endif %}
+
+    </div>
+
+</section>
+
+
+{% endblock %}

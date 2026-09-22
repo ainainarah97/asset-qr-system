@@ -1,0 +1,45 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Asset QR System\n"
+"Language: ms\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Asset QR System"
+msgstr "Sistem QR Aset"
+
+msgid "Government Asset Information System"
+msgstr "Sistem Maklumat Aset Kerajaan"
+
+msgid "Dashboard"
+msgstr "Papan Pemuka"
+
+msgid "Premises"
+msgstr "Premis"
+
+msgid "Blocks"
+msgstr "Blok"
+
+msgid "Levels"
+msgstr "Aras"
+
+msgid "Rooms"
+msgstr "Ruang"
+
+msgid "Components"
+msgstr "Komponen"
+
+msgid "Choose language"
+msgstr "Pilih bahasa"
+
+msgid "Logged in as"
+msgstr "Log masuk sebagai"
+
+msgid "Logout"
+msgstr "Log Keluar"
+
+msgid "Login"
+msgstr "Log Masuk"
+
+msgid "Government Immovable Asset Information System"
+msgstr "Sistem Maklumat Aset Tak Alih Kerajaan"

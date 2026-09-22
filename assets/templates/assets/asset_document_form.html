@@ -1,0 +1,116 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+{{ page_title }} | Asset QR System
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>{{ page_title }}</h2>
+
+        <p>
+            Upload and link manuals, warranties, certificates,
+            inspection reports and other supporting documents.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'assets:asset_document_list' %}"
+        class="button button-secondary"
+    >
+        Back to Documents
+    </a>
+</div>
+
+
+<div class="form-container">
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+    >
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-warning">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+        {% for field in form %}
+
+            <div style="margin-bottom: 20px;">
+
+                <label
+                    for="{{ field.id_for_label }}"
+                    style="
+                        display: block;
+                        margin-bottom: 8px;
+                        font-weight: 700;
+                    "
+                >
+                    {{ field.label }}
+
+                    {% if field.field.required %}
+                        <span style="color: #dc2626;">
+                            *
+                        </span>
+                    {% endif %}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <div class="secondary-text">
+                        {{ field.help_text }}
+                    </div>
+                {% endif %}
+
+                {% if field.errors %}
+                    <div
+                        style="
+                            margin-top: 7px;
+                            color: #b91c1c;
+                            font-size: 14px;
+                        "
+                    >
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="button"
+            >
+                {{ button_text }}
+            </button>
+
+            <a
+                href="{% url 'assets:asset_document_list' %}"
+                class="button button-secondary"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

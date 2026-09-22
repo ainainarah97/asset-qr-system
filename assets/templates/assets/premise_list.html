@@ -1,0 +1,390 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+Premises | Asset QR System
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h2>
+            Premises
+        </h2>
+
+        <p>
+            List of registered government premises.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'assets:premise_create' %}"
+        class="button"
+    >
+        Add Premise
+    </a>
+
+</div>
+
+<form method="get">
+
+<select
+    name="sort"
+    class="form-control"
+    onchange="this.form.submit()"
+>
+
+
+<option value="">
+    Sort By
+</option>
+
+
+<option
+    value="newest"
+    {% if request.GET.sort == "newest" %}
+        selected
+    {% endif %}
+>
+    Newest
+</option>
+
+
+<option
+    value="oldest"
+    {% if request.GET.sort == "oldest" %}
+        selected
+    {% endif %}
+>
+    Oldest
+</option>
+
+
+<option
+    value="name_a"
+    {% if request.GET.sort == "name_a" %}
+        selected
+    {% endif %}
+>
+    Name A-Z
+</option>
+
+
+<option
+    value="name_z"
+    {% if request.GET.sort == "name_z" %}
+        selected
+    {% endif %}
+>
+    Name Z-A
+</option>
+
+
+</select>
+
+</form>
+
+<div class="filter-card">
+
+<form method="get">
+
+
+<div class="filter-grid">
+
+
+    <!-- Search -->
+    <div class="filter-group">
+
+        <label>
+            Search
+        </label>
+
+        <input
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search premise..."
+            value="{{ request.GET.search|default:'' }}"
+        >
+
+    </div>
+
+
+
+    <!-- State -->
+    <div class="filter-group">
+
+        <label>
+            State
+        </label>
+
+
+        <select
+            name="state"
+            class="form-control"
+        >
+
+            <option value="">
+                All States
+            </option>
+
+
+            {% for state in states %}
+
+            <option
+                value="{{ state }}"
+                {% if request.GET.state == state %}
+                selected
+                {% endif %}
+            >
+                {{ state }}
+            </option>
+
+            {% endfor %}
+
+
+        </select>
+
+
+    </div>
+
+
+
+    <!-- Status -->
+    <div class="filter-group">
+
+        <label>
+            Status
+        </label>
+
+
+        <select
+            name="status"
+            class="form-control"
+        >
+
+            <option value="">
+                All Statuses
+            </option>
+
+
+            <option value="active">
+                Active
+            </option>
+
+
+            <option value="inactive">
+                Inactive
+            </option>
+
+
+        </select>
+
+
+    </div>
+
+
+
+</div>
+
+
+<div class="filter-actions">
+
+
+<button
+type="submit"
+class="button"
+>
+Filter
+</button>
+
+
+<a
+href="{% url 'assets:premise_list' %}"
+class="button button-secondary"
+>
+Reset
+</a>
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>DPA Number</th>
+                <th>Premise Name</th>
+                <th>State</th>
+                <th>District</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+
+            {% for premise in premises %}
+
+                <tr>
+
+                    <!-- DPA NUMBER -->
+
+                    <td>
+                        <strong>
+                            {{ premise.dpa_number }}
+                        </strong>
+                    </td>
+
+
+                    <!-- PREMISE NAME -->
+
+                    <td>
+                        <strong>
+                            {{ premise.name }}
+                        </strong>
+                    </td>
+
+
+                    <!-- STATE -->
+
+                    <td>
+                        {{ premise.state }}
+                    </td>
+
+
+                    <!-- DISTRICT -->
+
+                    <td>
+
+                        {% if premise.district %}
+
+                            {{ premise.district }}
+
+                        {% else %}
+
+                            <span class="secondary-text">
+                                —
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+                        {% if premise.status == "active" %}
+
+                            <span class="badge badge-success">
+                                {{ premise.get_status_display }}
+                            </span>
+
+                        {% elif premise.status == "inactive" %}
+
+                            <span class="badge badge-danger">
+                                {{ premise.get_status_display }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge">
+                                {{ premise.get_status_display }}
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
+
+                    <td>
+
+                        <div class="action-buttons">
+
+                            <!-- VIEW QR -->
+
+                            <a
+                                href="{% url 'assets:premise_qr_code' premise.id %}"
+                                class="button button-small"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View QR
+                            </a>
+
+
+                            <!-- EDIT -->
+
+                            <a
+                                href="{% url 'assets:premise_update' premise.id %}"
+                                class="button button-small button-secondary"
+                            >
+                                Edit
+                            </a>
+
+
+                            <!-- DELETE -->
+
+                            <a href="{% url 'assets:premise_delete' premise.id %}"
+                                class="button button-small button-danger">
+                                    Delete
+                            </a>
+   
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+            {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty-message"
+                    >
+
+                        No premises found.
+
+                        <div style="margin-top: 16px;">
+
+                            <a
+                                href="{% url 'assets:premise_create' %}"
+                                class="button"
+                            >
+                                Add First Premise
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

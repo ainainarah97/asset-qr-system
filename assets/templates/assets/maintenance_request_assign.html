@@ -1,0 +1,98 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "Assign Technician" %} | AssetGuard
+{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-section">
+
+    <div class="section-heading">
+
+        <h2>
+            {% trans "Assign Technician" %}
+        </h2>
+
+        <p>
+            {{ maintenance_request.request_no }}
+        </p>
+
+    </div>
+
+
+    <div class="detail-card">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div style="margin-bottom: 20px;">
+
+                <label for="technician">
+                    <strong>
+                        {% trans "Technician" %}
+                    </strong>
+                </label>
+
+                <select
+                    id="technician"
+                    name="technician"
+                    required
+                    style="
+                        width: 100%;
+                        margin-top: 8px;
+                        padding: 12px;
+                    "
+                >
+
+                    <option value="">
+                        {% trans "Select Technician" %}
+                    </option>
+
+                    {% for technician in technicians %}
+
+                        <option value="{{ technician.id }}">
+                            {{ technician.username }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div
+                style="
+                    display: flex;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                "
+            >
+
+                <a
+                    href="{% url 'assets:maintenance_request_detail' maintenance_request.id %}"
+                    class="btn-secondary"
+                >
+                    ← {% trans "Cancel" %}
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    {% trans "Assign Technician" %}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

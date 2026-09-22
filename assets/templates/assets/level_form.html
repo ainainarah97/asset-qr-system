@@ -1,0 +1,163 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+{% if level %}
+Edit Level | Asset QR System
+{% else %}
+Add Level | Asset QR System
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            {% if level %}
+                Edit Level
+            {% else %}
+                Add Level
+            {% endif %}
+        </h2>
+
+        <p>
+            Register and manage building level information.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<div class="form-card">
+
+
+<form method="post">
+
+{% csrf_token %}
+
+
+<div class="form-grid">
+
+
+<!-- BLOCK -->
+
+<div class="form-group form-group-full">
+
+<label for="{{ form.block.id_for_label }}">
+Block or External Structure
+</label>
+
+{{ form.block }}
+
+{% if form.block.errors %}
+<div class="form-error">
+{{ form.block.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- LEVEL CODE -->
+
+<div class="form-group">
+
+<label for="{{ form.code.id_for_label }}">
+Level Code
+</label>
+
+{{ form.code }}
+
+{% if form.code.errors %}
+<div class="form-error">
+{{ form.code.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- LEVEL NAME -->
+
+<div class="form-group">
+
+<label for="{{ form.name.id_for_label }}">
+Level Name
+</label>
+
+{{ form.name }}
+
+{% if form.name.errors %}
+<div class="form-error">
+{{ form.name.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- SEQUENCE -->
+
+<div class="form-group">
+
+<label for="{{ form.sequence.id_for_label }}">
+Sequence
+</label>
+
+{{ form.sequence }}
+
+{% if form.sequence.errors %}
+<div class="form-error">
+{{ form.sequence.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+</div>
+
+
+
+<div class="form-actions">
+
+
+<a
+href="{% url 'assets:level_list' %}"
+class="button button-secondary"
+>
+Cancel
+</a>
+
+
+<button
+type="submit"
+class="button"
+>
+{% if level %}
+Save Changes
+{% else %}
+Save Level
+{% endif %}
+</button>
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+
+{% endblock %}

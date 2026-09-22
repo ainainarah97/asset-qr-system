@@ -1,0 +1,359 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+{% if component %}
+Edit Component | Asset QR System
+{% else %}
+Add Component | Asset QR System
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            {% if component %}
+                Edit Asset Component
+            {% else %}
+                Add Asset Component
+            {% endif %}
+        </h2>
+
+        <p>
+            Register and manage mechanical, electrical and other asset components.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<div class="form-card">
+
+<form method="post">
+
+{% csrf_token %}
+
+
+<div class="form-grid">
+
+
+<!-- ROOM -->
+
+<div class="form-group form-group-full">
+
+<label for="{{ form.room.id_for_label }}">
+Room / Location
+</label>
+
+{{ form.room }}
+
+{% if form.room.errors %}
+<div class="form-error">
+{{ form.room.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- COMPONENT ID -->
+
+<div class="form-group">
+
+<label for="{{ form.component_id.id_for_label }}">
+Component ID
+</label>
+
+{{ form.component_id }}
+
+{% if form.component_id.errors %}
+<div class="form-error">
+{{ form.component_id.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- COMPONENT NAME -->
+
+<div class="form-group">
+
+<label for="{{ form.name.id_for_label }}">
+Component Name
+</label>
+
+{{ form.name }}
+
+{% if form.name.errors %}
+<div class="form-error">
+{{ form.name.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- COMPONENT CODE -->
+
+<div class="form-group">
+
+<label for="{{ form.component_code.id_for_label }}">
+Component Code
+</label>
+
+{{ form.component_code }}
+
+{% if form.component_code.errors %}
+<div class="form-error">
+{{ form.component_code.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- DISCIPLINE -->
+
+<div class="form-group">
+
+<label for="{{ form.discipline.id_for_label }}">
+Discipline
+</label>
+
+{{ form.discipline }}
+
+{% if form.discipline.errors %}
+<div class="form-error">
+{{ form.discipline.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- SYSTEM -->
+
+<div class="form-group">
+
+<label for="{{ form.system.id_for_label }}">
+System
+</label>
+
+{{ form.system }}
+
+{% if form.system.errors %}
+<div class="form-error">
+{{ form.system.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- SUBSYSTEM -->
+
+<div class="form-group">
+
+<label for="{{ form.subsystem.id_for_label }}">
+Subsystem
+</label>
+
+{{ form.subsystem }}
+
+{% if form.subsystem.errors %}
+<div class="form-error">
+{{ form.subsystem.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- BRAND -->
+
+<div class="form-group">
+
+<label for="{{ form.brand.id_for_label }}">
+Brand
+</label>
+
+{{ form.brand }}
+
+{% if form.brand.errors %}
+<div class="form-error">
+{{ form.brand.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- MODEL -->
+
+<div class="form-group">
+
+<label for="{{ form.model.id_for_label }}">
+Model
+</label>
+
+{{ form.model }}
+
+{% if form.model.errors %}
+<div class="form-error">
+{{ form.model.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- SERIAL NUMBER -->
+
+<div class="form-group">
+
+<label for="{{ form.serial_number.id_for_label }}">
+Serial Number
+</label>
+
+{{ form.serial_number }}
+
+{% if form.serial_number.errors %}
+<div class="form-error">
+{{ form.serial_number.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- SECURITY LEVEL -->
+
+<div class="form-group">
+
+<label for="{{ form.security_level.id_for_label }}">
+Security Level
+</label>
+
+{{ form.security_level }}
+
+{% if form.security_level.errors %}
+<div class="form-error">
+{{ form.security_level.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- INSTALLATION DATE -->
+
+<div class="form-group">
+
+<label for="{{ form.installation_date.id_for_label }}">
+Installation Date
+</label>
+
+{{ form.installation_date }}
+
+{% if form.installation_date.errors %}
+<div class="form-error">
+{{ form.installation_date.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- WARRANTY EXPIRY -->
+
+<div class="form-group">
+
+<label for="{{ form.warranty_expiry.id_for_label }}">
+Warranty Expiry
+</label>
+
+{{ form.warranty_expiry }}
+
+{% if form.warranty_expiry.errors %}
+<div class="form-error">
+{{ form.warranty_expiry.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- STATUS -->
+
+<div class="form-group">
+
+<label for="{{ form.status.id_for_label }}">
+Status
+</label>
+
+{{ form.status }}
+
+{% if form.status.errors %}
+<div class="form-error">
+{{ form.status.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+</div>
+
+
+
+<div class="form-actions">
+
+<a
+href="{% url 'assets:component_list' %}"
+class="button button-secondary"
+>
+Cancel
+</a>
+
+
+<button
+type="submit"
+class="button"
+>
+{% if component %}
+Save Changes
+{% else %}
+Save Component
+{% endif %}
+</button>
+
+</div>
+
+
+</form>
+
+</div>
+
+
+{% endblock %}

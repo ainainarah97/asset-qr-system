@@ -1,0 +1,165 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+DA6 Bulk Import | Asset QR System
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>DA6 Bulk Import</h2>
+
+        <p>
+            Upload one complete DA6 Excel workbook.
+            The system will automatically identify the
+            Premise using the DPA Number in the workbook.
+        </p>
+    </div>
+</div>
+
+
+<div class="form-container">
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+    >
+        {% csrf_token %}
+
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-warning">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+        <!-- FILE -->
+
+        <div style="margin-bottom: 20px;">
+
+            <label
+                for="{{ form.file.id_for_label }}"
+                style="
+                    display: block;
+                    margin-bottom: 8px;
+                    font-weight: 700;
+                "
+            >
+                DA6 Excel File (.xlsx or .xlsm)
+                <span style="color: #dc2626;">*</span>
+            </label>
+
+            {{ form.file }}
+
+            <div
+                class="secondary-text"
+                style="margin-top: 7px;"
+            >
+                Maximum file size: 20 MB.
+            </div>
+
+            {% for error in form.file.errors %}
+                <div
+                    style="
+                        margin-top: 7px;
+                        color: #b91c1c;
+                        font-size: 14px;
+                    "
+                >
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+        </div>
+
+
+        <!-- PREMISE AUTO-DETECTION -->
+
+        <div
+            style="
+                margin-bottom: 20px;
+                padding: 16px 18px;
+                border: 1px solid #b9e4df;
+                background: #f0f9f8;
+                border-radius: 8px;
+            "
+        >
+            <strong>
+                Automatic Premise Detection
+            </strong>
+
+            <p
+                style="
+                    margin: 8px 0 0;
+                    line-height: 1.6;
+                "
+            >
+                The system will read the DPA Number from
+                the <strong>Premise</strong> worksheet.
+            </p>
+
+            <p
+                style="
+                    margin: 6px 0 0;
+                    line-height: 1.6;
+                "
+            >
+                If the DPA Number already exists,
+                the existing Premise will be reused.
+                If it does not exist, a new Premise
+                will be created automatically.
+            </p>
+        </div>
+
+
+        <!-- INFORMATION -->
+
+        <div class="alert alert-warning">
+
+            <strong>Bulk Import Process</strong>
+
+            <p>
+                The workbook must contain the required
+                Premise, DAK Blok, DAKRuang and
+                DAKKomponen worksheets.
+            </p>
+
+            <p>
+                Existing Blocks, Levels, Rooms and
+                Components will not be overwritten.
+                Only new records will be added.
+            </p>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="button"
+            >
+                Upload &amp; Validate DA6
+            </button>
+
+            <a
+                href="{% url 'assets:dashboard' %}"
+                class="button button-secondary"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

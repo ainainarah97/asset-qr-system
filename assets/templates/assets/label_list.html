@@ -1,0 +1,165 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+Asset Labels | Asset QR System
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Asset Labels</h2>
+
+        <p>
+            Manage DPA, DAK Block, DAK Level, DAK Room and
+            DAK Component labels.
+        </p>
+    </div>
+</div>
+
+
+<div class="table-container">
+
+    <table class="room-table">
+
+        <thead>
+            <tr>
+                <th>Label Code</th>
+                <th>Label Type</th>
+                <th>Related Asset</th>
+                <th>Material</th>
+                <th>Size</th>
+                <th>Status</th>
+                <th>Installation</th>
+                <th>Verification</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+
+        {% for label in labels %}
+
+            <tr>
+
+                <td>
+                    <strong>
+                        {{ label.label_code }}
+                    </strong>
+
+                    {% if label.qr_code %}
+                        <div class="secondary-text">
+                            QR Available
+                        </div>
+                    {% endif %}
+                </td>
+
+
+                <td>
+                    <span class="badge">
+                        {{ label.get_label_type_display }}
+                    </span>
+                </td>
+
+
+                <td>
+
+                    {% if label.component %}
+                        Component:
+                        {{ label.component.name }}
+
+                    {% elif label.room %}
+                        Room:
+                        {{ label.room.name }}
+
+                    {% elif label.block %}
+                        Block:
+                        {{ label.block.name }}
+
+                    {% elif label.premise %}
+                        Premise:
+                        {{ label.premise.name }}
+
+                    {% else %}
+                        -
+                    {% endif %}
+
+                </td>
+
+
+                <td>
+                    {{ label.material|default:"-" }}
+                </td>
+
+
+                <td>
+                    {{ label.label_size|default:"-" }}
+                </td>
+
+
+                <td>
+                    <span class="badge">
+                        {{ label.get_status_display }}
+                    </span>
+                </td>
+
+
+                <td>
+
+                    {% if label.installation_date %}
+
+                        {{ label.installation_date }}
+
+                        <div class="secondary-text">
+                            {{ label.installer }}
+                        </div>
+
+                    {% else %}
+
+                        Pending
+
+                    {% endif %}
+
+                </td>
+
+
+                <td>
+
+                    {% if label.verification_date %}
+
+                        Verified
+
+                        <div class="secondary-text">
+                            {{ label.verified_by }}
+                        </div>
+
+                    {% else %}
+
+                        Pending
+
+                    {% endif %}
+
+                </td>
+
+
+            </tr>
+
+
+        {% empty %}
+
+            <tr>
+                <td colspan="8" class="empty-message">
+                    No asset labels found.
+                </td>
+            </tr>
+
+        {% endfor %}
+
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

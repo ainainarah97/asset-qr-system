@@ -1,0 +1,180 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+Replace QR Code | Asset QR System
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Replace QR Code</h2>
+
+        <p>
+            Create a replacement label while preserving the old QR
+            record and scan history.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'assets:qr_code_list' %}"
+        class="button button-secondary"
+    >
+        Back to QR Codes
+    </a>
+</div>
+
+
+<div class="form-container">
+
+    <div
+        style="
+            margin-bottom: 24px;
+            padding: 18px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+        "
+    >
+        <h3 style="margin-top: 0;">
+            Current QR Record
+        </h3>
+
+        <div style="margin-bottom: 8px;">
+            <strong>QR ID:</strong>
+            {{ old_qr.qr_id }}
+        </div>
+
+        <div style="margin-bottom: 8px;">
+            <strong>QR Type:</strong>
+            {{ old_qr.get_qr_type_display }}
+        </div>
+
+        <div style="margin-bottom: 8px;">
+            <strong>Linked Asset:</strong>
+
+            {% if old_qr.component %}
+                {{ old_qr.component.component_id }}
+                — {{ old_qr.component.name }}
+
+            {% elif old_qr.room %}
+                {{ old_qr.room.room_tag }}
+                — {{ old_qr.room.name }}
+
+            {% elif old_qr.level %}
+                {{ old_qr.level.block.code }}.{{ old_qr.level.code }}
+                — {{ old_qr.level.name }}
+
+            {% elif old_qr.block %}
+                {{ old_qr.block.code }}
+                — {{ old_qr.block.name }}
+
+            {% elif old_qr.premise %}
+                {{ old_qr.premise.name }}
+
+            {% else %}
+                Not linked
+            {% endif %}
+        </div>
+
+        <div>
+            <strong>Current Status:</strong>
+
+            {% if old_qr.is_active %}
+                Active
+            {% else %}
+                Inactive
+            {% endif %}
+        </div>
+    </div>
+
+
+    <div
+        style="
+            margin-bottom: 24px;
+            padding: 16px;
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #fed7aa;
+            border-radius: 10px;
+            line-height: 1.6;
+        "
+    >
+        Replacing this QR will create a new permanent QR record and
+        deactivate the old one. The old scan history will be retained.
+    </div>
+
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-error-summary">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+        <div class="form-group">
+            <label for="{{ form.new_qr_id.id_for_label }}">
+                New QR ID
+            </label>
+
+            {{ form.new_qr_id }}
+
+            {% for error in form.new_qr_id.errors %}
+                <div class="field-error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+            <small>
+                Enter a unique reference for the replacement label.
+            </small>
+        </div>
+
+
+        <div class="form-group">
+            <label for="{{ form.replacement_reason.id_for_label }}">
+                Replacement Reason
+            </label>
+
+            {{ form.replacement_reason }}
+
+            {% for error in form.replacement_reason.errors %}
+                <div class="field-error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+            <small>
+                Example: label damaged, missing, faded or unreadable.
+            </small>
+        </div>
+
+
+        <div class="form-actions">
+            <button
+                type="submit"
+                class="button"
+                onclick="return confirm(
+                    'Replace this QR code and deactivate the old label?'
+                );"
+            >
+                Create Replacement QR
+            </button>
+
+            <a
+                href="{% url 'assets:qr_code_list' %}"
+                class="button button-secondary"
+            >
+                Cancel
+            </a>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,1594 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+Drawings & Documents | Asset QR System
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =========================================================
+     PAGE HEADER
+     ========================================================= -->
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            Drawings & Documents
+        </h2>
+
+        <p>
+            Manage drawings, manuals, warranties,
+            certificates and supporting asset documents.
+        </p>
+
+    </div>
+
+
+    <div class="action-buttons">
+
+        <a
+            href="{% url 'assets:drawing_create' %}"
+            class="button button-secondary"
+        >
+            Upload Drawing
+        </a>
+
+
+        <a
+            href="{% url 'assets:asset_document_create' %}"
+            class="button"
+        >
+            Upload Document
+        </a>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     TABS
+     ========================================================= -->
+
+<div class="module-tabs">
+
+
+    <button
+        type="button"
+        class="module-tab active"
+        data-tab="drawings"
+    >
+
+        Drawings
+
+        <span class="tab-count">
+            {{ drawings|length }}
+        </span>
+
+    </button>
+
+
+    <button
+        type="button"
+        class="module-tab"
+        data-tab="documents"
+    >
+
+        Documents
+
+        <span class="tab-count">
+            {{ documents|length }}
+        </span>
+
+    </button>
+
+
+</div>
+
+
+
+<!-- =========================================================
+     DRAWINGS TAB
+     ========================================================= -->
+
+<section
+    id="drawings-tab"
+    class="tab-panel active"
+>
+
+
+    <!-- =====================================================
+         DRAWING FILTERS
+         ===================================================== -->
+
+    <form
+        method="get"
+        action="{% url 'assets:drawing_list' %}"
+        class="module07-filter-card"
+    >
+
+        <input
+            type="hidden"
+            name="tab"
+            value="drawings"
+        >
+
+
+        <!-- SEARCH -->
+
+        <div class="module07-filter-field">
+
+            <label>
+                Search
+            </label>
+
+            <input
+                type="text"
+                name="drawing_search"
+                value="{{ drawing_search }}"
+                placeholder="Drawing no., title, room, component..."
+            >
+
+        </div>
+
+
+        <!-- TYPE -->
+
+        <div class="module07-filter-field">
+
+            <label>
+                Type
+            </label>
+
+            <select name="drawing_type">
+
+                <option value="">
+                    All Types
+                </option>
+
+                {% for value, label in drawing_types %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if drawing_type_selected == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- PREMISE -->
+
+        <div class="module07-filter-field">
+
+            <label>
+                Premise
+            </label>
+
+            <select name="drawing_premise">
+
+                <option value="">
+                    All Premises
+                </option>
+
+                {% for premise in premises %}
+
+                    <option
+                        value="{{ premise.id }}"
+                        {% if drawing_premise_selected == premise.id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ premise.name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="module07-filter-field">
+
+            <label>
+                Status
+            </label>
+
+            <select name="drawing_status">
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                {% for value, label in drawing_statuses %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if drawing_status_selected == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="module07-filter-actions">
+
+            <button
+                type="submit"
+                class="module07-filter-btn"
+            >
+                Filter
+            </button>
+
+
+            <a
+                href="{% url 'assets:drawing_list' %}?tab=drawings"
+                class="module07-reset-btn"
+            >
+                Reset
+            </a>
+
+        </div>
+
+
+    </form>
+
+
+
+    <!-- =====================================================
+         DRAWINGS TABLE
+         ===================================================== -->
+
+    <div class="table-container">
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Drawing No.
+                    </th>
+
+                    <th>
+                        Title
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Location
+                    </th>
+
+                    <th>
+                        Revision
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        File
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                {% for drawing in drawings %}
+
+
+                    <tr>
+
+
+                        <!-- DRAWING NUMBER -->
+
+                        <td>
+
+                            <strong>
+                                {{ drawing.drawing_number }}
+                            </strong>
+
+
+                            {% if drawing.drawing_date %}
+
+                                <div class="secondary-text">
+                                    {{ drawing.drawing_date|date:"d M Y" }}
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- TITLE -->
+
+                        <td>
+
+                            <strong>
+                                {{ drawing.title }}
+                            </strong>
+
+
+                            {% if drawing.description %}
+
+                                <div class="secondary-text">
+                                    {{ drawing.description|truncatechars:70 }}
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- TYPE -->
+
+                        <td>
+
+                            <span class="badge badge-info">
+                                {{ drawing.get_drawing_type_display }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- LOCATION -->
+
+                        <td>
+
+                            <strong>
+                                {{ drawing.premise.name }}
+                            </strong>
+
+
+                            {% if drawing.block %}
+
+                                <div class="secondary-text">
+                                    {{ drawing.block.code }}
+                                    -
+                                    {{ drawing.block.name }}
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if drawing.level %}
+
+                                <div class="secondary-text">
+                                    {{ drawing.level.code }}
+                                    -
+                                    {{ drawing.level.name }}
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if drawing.room %}
+
+                                <div class="secondary-text">
+                                    {{ drawing.room.room_tag }}
+                                    -
+                                    {{ drawing.room.name }}
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if drawing.component %}
+
+                                <div class="secondary-text">
+                                    {{ drawing.component.component_id }}
+                                    -
+                                    {{ drawing.component.name }}
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- REVISION -->
+
+                        <td>
+
+                            <strong>
+                                Rev {{ drawing.revision }}
+                            </strong>
+
+                        </td>
+
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+
+                            {% if drawing.status == "current" %}
+
+                                <span class="badge badge-success">
+                                    {{ drawing.get_status_display }}
+                                </span>
+
+
+                            {% elif drawing.status == "draft" %}
+
+                                <span class="badge badge-warning">
+                                    {{ drawing.get_status_display }}
+                                </span>
+
+
+                            {% elif drawing.status == "superseded" %}
+
+                                <span class="badge badge-danger">
+                                    {{ drawing.get_status_display }}
+                                </span>
+
+
+                            {% else %}
+
+                                <span class="badge">
+                                    {{ drawing.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+
+                        </td>
+
+
+
+                        <!-- FILE -->
+
+                        <td>
+
+
+                            {% if drawing.file %}
+
+                                <a
+                                    href="{% url 'assets:drawing_download' drawing.id %}"
+                                    class="button button-small button-secondary"
+                                    target="_blank"
+                                >
+                                    View
+                                </a>
+
+
+                            {% else %}
+
+                                <span class="secondary-text">
+                                    No file
+                                </span>
+
+                            {% endif %}
+
+
+                        </td>
+
+
+
+                        <!-- ACTIONS -->
+
+                        <td>
+
+                            <div class="action-buttons">
+
+
+                                <a
+                                    href="{% url 'assets:drawing_edit' drawing.id %}"
+                                    class="button button-small button-secondary"
+                                >
+                                    Edit
+                                </a>
+
+
+                                {% if drawing.status != "archived" %}
+
+
+                                    <a
+                                        href="{% url 'assets:drawing_new_revision' drawing.id %}"
+                                        class="button button-small"
+                                    >
+                                        Revision
+                                    </a>
+
+
+                                    <a
+                                        href="{% url 'assets:drawing_archive' drawing.id %}"
+                                        class="button button-small button-danger"
+                                    >
+                                        Archive
+                                    </a>
+
+
+                                {% endif %}
+
+
+                            </div>
+
+                        </td>
+
+
+                    </tr>
+
+
+                {% empty %}
+
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="empty-message"
+                        >
+                            No drawings uploaded.
+                        </td>
+
+                    </tr>
+
+
+                {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =========================================================
+     DOCUMENTS TAB
+     ========================================================= -->
+
+<section
+    id="documents-tab"
+    class="tab-panel"
+>
+
+
+    <!-- =====================================================
+         DOCUMENT FILTERS
+         ===================================================== -->
+
+    <form
+        method="get"
+        action="{% url 'assets:drawing_list' %}"
+        class="module07-filter-card"
+    >
+
+        <input
+            type="hidden"
+            name="tab"
+            value="documents"
+        >
+
+
+        <!-- SEARCH -->
+
+        <div class="module07-filter-field">
+
+            <label>
+                Search
+            </label>
+
+            <input
+                type="text"
+                name="document_search"
+                value="{{ document_search }}"
+                placeholder="Document no., title, room, component..."
+            >
+
+        </div>
+
+
+        <!-- TYPE -->
+
+        <div class="module07-filter-field">
+
+            <label>
+                Type
+            </label>
+
+            <select name="document_type">
+
+                <option value="">
+                    All Types
+                </option>
+
+                {% for value, label in document_types %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if document_type_selected == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- PREMISE -->
+
+        <div class="module07-filter-field">
+
+            <label>
+                Premise
+            </label>
+
+            <select name="document_premise">
+
+                <option value="">
+                    All Premises
+                </option>
+
+                {% for premise in premises %}
+
+                    <option
+                        value="{{ premise.id }}"
+                        {% if document_premise_selected == premise.id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ premise.name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="module07-filter-field">
+
+            <label>
+                Status
+            </label>
+
+            <select name="document_status">
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                {% for value, label in document_statuses %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if document_status_selected == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="module07-filter-actions">
+
+            <button
+                type="submit"
+                class="module07-filter-btn"
+            >
+                Filter
+            </button>
+
+
+            <a
+                href="{% url 'assets:drawing_list' %}?tab=documents"
+                class="module07-reset-btn"
+            >
+                Reset
+            </a>
+
+        </div>
+
+
+    </form>
+
+
+
+    <!-- =====================================================
+         DOCUMENT TABLE
+         ===================================================== -->
+
+    <div class="table-container">
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Document No.
+                    </th>
+
+                    <th>
+                        Title
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Location
+                    </th>
+
+                    <th>
+                        Issue / Expiry
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        File
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                {% for document in documents %}
+
+
+                    <tr>
+
+
+                        <!-- DOCUMENT NUMBER -->
+
+                        <td>
+
+                            <strong>
+                                {{ document.document_number }}
+                            </strong>
+
+                        </td>
+
+
+
+                        <!-- TITLE -->
+
+                        <td>
+
+                            <strong>
+                                {{ document.title }}
+                            </strong>
+
+
+                            {% if document.description %}
+
+                                <div class="secondary-text">
+                                    {{ document.description|truncatechars:70 }}
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- TYPE -->
+
+                        <td>
+
+                            <span class="badge badge-info">
+                                {{ document.get_document_type_display }}
+                            </span>
+
+                        </td>
+
+
+
+                        <!-- LOCATION -->
+
+                        <td>
+
+                            <strong>
+                                {{ document.premise.name }}
+                            </strong>
+
+
+                            {% if document.block %}
+
+                                <div class="secondary-text">
+                                    {{ document.block.code }}
+                                    -
+                                    {{ document.block.name }}
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if document.level %}
+
+                                <div class="secondary-text">
+                                    {{ document.level.code }}
+                                    -
+                                    {{ document.level.name }}
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if document.room %}
+
+                                <div class="secondary-text">
+                                    {{ document.room.room_tag }}
+                                    -
+                                    {{ document.room.name }}
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if document.component %}
+
+                                <div class="secondary-text">
+                                    {{ document.component.component_id }}
+                                    -
+                                    {{ document.component.name }}
+                                </div>
+
+                            {% endif %}
+
+                        </td>
+
+
+
+                        <!-- ISSUE / EXPIRY -->
+
+                        <td>
+
+
+                            {% if document.issue_date %}
+
+                                <div>
+
+                                    <strong>
+                                        Issued:
+                                    </strong>
+
+                                    {{ document.issue_date|date:"d M Y" }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if document.expiry_date %}
+
+                                <div class="secondary-text">
+
+                                    <strong>
+                                        Expiry:
+                                    </strong>
+
+                                    {{ document.expiry_date|date:"d M Y" }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                            {% if not document.issue_date and not document.expiry_date %}
+
+                                <span class="secondary-text">
+                                    -
+                                </span>
+
+                            {% endif %}
+
+
+                        </td>
+
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+
+                            {% if document.status == "current" %}
+
+                                <span class="badge badge-success">
+                                    {{ document.get_status_display }}
+                                </span>
+
+
+                            {% elif document.status == "draft" %}
+
+                                <span class="badge badge-warning">
+                                    {{ document.get_status_display }}
+                                </span>
+
+
+                            {% elif document.status == "expired" %}
+
+                                <span class="badge badge-danger">
+                                    {{ document.get_status_display }}
+                                </span>
+
+
+                            {% else %}
+
+                                <span class="badge">
+                                    {{ document.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+
+                        </td>
+
+
+
+                        <!-- FILE -->
+
+                        <td>
+
+
+                            {% if document.file %}
+
+                                <a
+                                    href="{% url 'assets:asset_document_download' document.id %}"
+                                    class="button button-small button-secondary"
+                                    target="_blank"
+                                >
+                                    View
+                                </a>
+
+
+                            {% else %}
+
+                                <span class="secondary-text">
+                                    No file
+                                </span>
+
+                            {% endif %}
+
+
+                        </td>
+
+
+
+                        <!-- ACTIONS -->
+
+                        <td>
+
+                            <div class="action-buttons">
+
+
+                                <a
+                                    href="{% url 'assets:asset_document_edit' document.id %}"
+                                    class="button button-small button-secondary"
+                                >
+                                    Edit
+                                </a>
+
+
+                                {% if document.status != "archived" %}
+
+                                    <a
+                                        href="{% url 'assets:asset_document_archive' document.id %}"
+                                        class="button button-small button-danger"
+                                    >
+                                        Archive
+                                    </a>
+
+                                {% endif %}
+
+
+                            </div>
+
+                        </td>
+
+
+                    </tr>
+
+
+                {% empty %}
+
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="empty-message"
+                        >
+                            No documents uploaded.
+                        </td>
+
+                    </tr>
+
+
+                {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+    </div>
+
+
+</section>
+
+
+
+<style>
+
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+.module-tabs {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-bottom: 22px;
+
+    border-bottom: 1px solid #dce7e9;
+
+}
+
+
+.module-tab {
+
+    padding: 13px 20px;
+
+    background: none;
+
+    color: #64748b;
+
+    border: none;
+
+    border-bottom: 3px solid transparent;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+}
+
+
+.module-tab.active {
+
+    color: #0F8F87;
+
+    border-bottom-color: #0F8F87;
+
+}
+
+
+.tab-count {
+
+    margin-left: 6px;
+
+    padding: 3px 8px;
+
+    background: #D9F2EF;
+
+    color: #08766f;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+}
+
+
+
+/* =========================================================
+   TAB PANELS
+   ========================================================= */
+
+.tab-panel {
+
+    display: none;
+
+}
+
+
+.tab-panel.active {
+
+    display: block;
+
+}
+
+
+
+/* =========================================================
+   MODULE 07 FILTER CARD
+   SAME STYLE AS MODULE 09
+   ========================================================= */
+
+.module07-filter-card {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 28px;
+
+    padding: 22px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce7e9;
+
+    border-radius: 14px;
+
+}
+
+
+
+/* =========================================================
+   FILTER FIELDS
+   ========================================================= */
+
+.module07-filter-field {
+
+    min-width: 0;
+
+}
+
+
+.module07-filter-field label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+}
+
+
+.module07-filter-field input,
+.module07-filter-field select {
+
+    width: 100%;
+
+    height: 44px;
+
+    padding: 9px 12px;
+
+    background: #ffffff;
+
+    color: #0f172a;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+}
+
+
+.module07-filter-field input:focus,
+.module07-filter-field select:focus {
+
+    outline: none;
+
+    border-color: #0F8F87;
+
+    box-shadow:
+        0 0 0 3px #D9F2EF;
+
+}
+
+
+
+/* =========================================================
+   FILTER ACTIONS
+   ========================================================= */
+
+.module07-filter-actions {
+
+    grid-column: 1 / -1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+}
+
+
+
+/* FILTER + RESET */
+
+.module07-filter-btn,
+.module07-reset-btn {
+
+    width: 120px;
+    min-width: 120px;
+
+    height: 44px;
+
+    padding: 0 16px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 9px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+}
+
+
+
+/* FILTER */
+
+.module07-filter-btn {
+
+    background: #0F8F87;
+
+    color: #ffffff;
+
+    border: 1px solid #0F8F87;
+
+    cursor: pointer;
+
+}
+
+
+.module07-filter-btn:hover {
+
+    background: #0B716B;
+
+}
+
+
+
+/* RESET */
+
+.module07-reset-btn {
+
+    background: #ffffff;
+
+    color: #0f172a;
+
+    border: 1px solid #cbd5e1;
+
+}
+
+
+.module07-reset-btn:hover {
+
+    background: #f8fafc;
+
+    border-color: #94a3b8;
+
+}
+
+
+
+/* =========================================================
+   TABLE IMPROVEMENTS
+   ========================================================= */
+
+.table-container {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+
+.table-container table {
+
+    min-width: 1100px;
+
+}
+
+
+.table-container th {
+
+    white-space: nowrap;
+
+}
+
+
+.table-container td {
+
+    vertical-align: middle;
+
+}
+
+
+
+/* LOCATION */
+
+.table-container th:nth-child(4),
+.table-container td:nth-child(4) {
+
+    min-width: 220px;
+
+}
+
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .module07-filter-card {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .module07-filter-card {
+
+        grid-template-columns: 1fr;
+
+        padding: 18px;
+
+    }
+
+
+    .module07-filter-actions {
+
+        justify-content: stretch;
+
+    }
+
+
+    .module07-filter-btn,
+    .module07-reset-btn {
+
+        width: 50%;
+
+        min-width: 0;
+
+        flex: 1;
+
+    }
+
+
+    .module-tabs {
+
+        overflow-x: auto;
+
+    }
+
+
+    .module-tab {
+
+        white-space: nowrap;
+
+    }
+
+}
+
+</style>
+
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const tabs =
+            document.querySelectorAll(
+                ".module-tab"
+            );
+
+        const panels =
+            document.querySelectorAll(
+                ".tab-panel"
+            );
+
+
+        /* =====================================================
+           OPEN TAB
+           ===================================================== */
+
+        function openTab(name) {
+
+            tabs.forEach(
+                function (tab) {
+
+                    tab.classList.toggle(
+                        "active",
+                        tab.dataset.tab === name
+                    );
+
+                }
+            );
+
+
+            panels.forEach(
+                function (panel) {
+
+                    panel.classList.toggle(
+                        "active",
+                        panel.id === name + "-tab"
+                    );
+
+                }
+            );
+
+        }
+
+
+
+        /* =====================================================
+           TAB CLICK
+           ===================================================== */
+
+        tabs.forEach(
+            function (tab) {
+
+                tab.addEventListener(
+                    "click",
+                    function () {
+
+                        openTab(
+                            tab.dataset.tab
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+
+        /* =====================================================
+           KEEP TAB AFTER FILTER / RESET
+           ===================================================== */
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const selectedTab =
+            params.get(
+                "tab"
+            );
+
+
+        if (selectedTab === "documents") {
+
+            openTab(
+                "documents"
+            );
+
+        } else {
+
+            openTab(
+                "drawings"
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+
+{% endblock %}

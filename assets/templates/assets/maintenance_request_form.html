@@ -1,0 +1,546 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% trans "New Maintenance Request" %} | AssetGuard
+{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-section">
+
+    <div class="section-heading">
+
+        <h2>
+            {% trans "New Maintenance Request" %}
+        </h2>
+
+        <p>
+            {% trans "Register a maintenance issue or complaint for a premise, location or asset component." %}
+        </p>
+
+    </div>
+
+
+    <div class="detail-card">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="form-errors">
+
+                    {% for error in form.non_field_errors %}
+                        <p>
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- ==============================
+                 LOCATION
+                 ============================== -->
+
+            <h3>
+                {% trans "Location Information" %}
+            </h3>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.premise.id_for_label }}">
+                    {% trans "Premise" %}
+                </label>
+
+                {{ form.premise }}
+
+                {% for error in form.premise.errors %}
+                    <small class="form-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.block.id_for_label }}">
+                    {% trans "Block / External Structure" %}
+                </label>
+
+                {{ form.block }}
+
+                {% for error in form.block.errors %}
+                    <small class="form-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.level.id_for_label }}">
+                    {% trans "Level" %}
+                </label>
+
+                {{ form.level }}
+
+                {% for error in form.level.errors %}
+                    <small class="form-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.room.id_for_label }}">
+                    {% trans "Room / Open Area" %}
+                </label>
+
+                {{ form.room }}
+
+                {% for error in form.room.errors %}
+                    <small class="form-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.component.id_for_label }}">
+                    {% trans "Component" %}
+                </label>
+
+                {{ form.component }}
+
+                <small class="secondary-text">
+                    {% trans "Optional for general room, area or building complaints." %}
+                </small>
+
+                {% for error in form.component.errors %}
+                    <small class="form-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+
+            </div>
+
+
+            <!-- ==============================
+                 ISSUE
+                 ============================== -->
+
+            <h3 style="margin-top: 30px;">
+                {% trans "Issue Information" %}
+            </h3>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.category.id_for_label }}">
+                    {% trans "Issue Category" %}
+                </label>
+
+                {{ form.category }}
+
+                {% for error in form.category.errors %}
+                    <small class="form-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.description.id_for_label }}">
+                    {% trans "Description" %}
+                </label>
+
+                {{ form.description }}
+
+                {% for error in form.description.errors %}
+                    <small class="form-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.priority.id_for_label }}">
+                    {% trans "Priority" %}
+                </label>
+
+                {{ form.priority }}
+
+                {% for error in form.priority.errors %}
+                    <small class="form-error">
+                        {{ error }}
+                    </small>
+                {% endfor %}
+
+            </div>
+
+
+            <!-- ==============================
+                 REPORTER
+                 ============================== -->
+
+            <h3 style="margin-top: 30px;">
+                {% trans "Reporter Information" %}
+            </h3>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.reporter_name.id_for_label }}">
+                    {% trans "Reporter Name" %}
+                </label>
+
+                {{ form.reporter_name }}
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="{{ form.reporter_contact.id_for_label }}">
+                    {% trans "Contact Number" %}
+                </label>
+
+                {{ form.reporter_contact }}
+
+            </div>
+
+
+            <!-- ==============================
+                 ACTIONS
+                 ============================== -->
+
+            <div
+                style="
+                    display: flex;
+                    gap: 12px;
+                    flex-wrap: wrap;
+                    margin-top: 30px;
+                "
+            >
+
+                <a
+                    href="{% url 'assets:maintenance_request_list' %}"
+                    class="btn-secondary"
+                >
+                    ← {% trans "Cancel" %}
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    {% trans "Submit Maintenance Request" %}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const premiseSelect =
+            document.getElementById("id_premise");
+
+        const blockSelect =
+            document.getElementById("id_block");
+
+        const levelSelect =
+            document.getElementById("id_level");
+
+        const roomSelect =
+            document.getElementById("id_room");
+
+        const componentSelect =
+            document.getElementById("id_component");
+
+
+        function resetSelect(
+            selectElement,
+            placeholder
+        ) {
+            selectElement.innerHTML = "";
+
+            const option =
+                document.createElement("option");
+
+            option.value = "";
+            option.textContent = placeholder;
+
+            selectElement.appendChild(option);
+        }
+
+
+        async function loadItems(
+            url,
+            selectElement,
+            placeholder,
+            createLabel
+        ) {
+
+            resetSelect(
+                selectElement,
+                "Loading..."
+            );
+
+            try {
+
+                const response =
+                    await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Unable to load data."
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+
+                resetSelect(
+                    selectElement,
+                    placeholder
+                );
+
+
+                data.items.forEach(
+                    function (item) {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+                        option.value = item.id;
+
+                        option.textContent =
+                            createLabel(item);
+
+                        selectElement.appendChild(
+                            option
+                        );
+                    }
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                resetSelect(
+                    selectElement,
+                    "Unable to load options"
+                );
+            }
+        }
+
+
+        premiseSelect.addEventListener(
+            "change",
+            function () {
+
+                resetSelect(
+                    blockSelect,
+                    "Select Block"
+                );
+
+                resetSelect(
+                    levelSelect,
+                    "Select Level"
+                );
+
+                resetSelect(
+                    roomSelect,
+                    "Select Room / Open Area"
+                );
+
+                resetSelect(
+                    componentSelect,
+                    "Select Component (Optional)"
+                );
+
+
+                if (!this.value) {
+                    return;
+                }
+
+
+                loadItems(
+                    "{% url 'assets:maintenance_load_blocks' %}?premise="
+                    + this.value,
+
+                    blockSelect,
+
+                    "Select Block",
+
+                    function (item) {
+                        return (
+                            item.code
+                            + " - "
+                            + item.name
+                        );
+                    }
+                );
+            }
+        );
+
+
+        blockSelect.addEventListener(
+            "change",
+            function () {
+
+                resetSelect(
+                    levelSelect,
+                    "Select Level"
+                );
+
+                resetSelect(
+                    roomSelect,
+                    "Select Room / Open Area"
+                );
+
+                resetSelect(
+                    componentSelect,
+                    "Select Component (Optional)"
+                );
+
+
+                if (!this.value) {
+                    return;
+                }
+
+
+                loadItems(
+                    "{% url 'assets:maintenance_load_levels' %}?block="
+                    + this.value,
+
+                    levelSelect,
+
+                    "Select Level",
+
+                    function (item) {
+                        return (
+                            item.code
+                            + " - "
+                            + item.name
+                        );
+                    }
+                );
+            }
+        );
+
+
+        levelSelect.addEventListener(
+            "change",
+            function () {
+
+                resetSelect(
+                    roomSelect,
+                    "Select Room / Open Area"
+                );
+
+                resetSelect(
+                    componentSelect,
+                    "Select Component (Optional)"
+                );
+
+
+                if (!this.value) {
+                    return;
+                }
+
+
+                loadItems(
+                    "{% url 'assets:maintenance_load_rooms' %}?level="
+                    + this.value,
+
+                    roomSelect,
+
+                    "Select Room / Open Area",
+
+                    function (item) {
+                        return (
+                            item.room_tag
+                            + " - "
+                            + item.name
+                        );
+                    }
+                );
+            }
+        );
+
+
+        roomSelect.addEventListener(
+            "change",
+            function () {
+
+                resetSelect(
+                    componentSelect,
+                    "Select Component (Optional)"
+                );
+
+
+                if (!this.value) {
+                    return;
+                }
+
+
+                loadItems(
+                    "{% url 'assets:maintenance_load_components' %}?room="
+                    + this.value,
+
+                    componentSelect,
+
+                    "Select Component (Optional)",
+
+                    function (item) {
+                        return (
+                            item.component_id
+                            + " - "
+                            + item.name
+                        );
+                    }
+                );
+            }
+        );
+
+    }
+);
+</script>
+
+{% endblock %}

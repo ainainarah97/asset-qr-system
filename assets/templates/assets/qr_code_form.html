@@ -1,0 +1,379 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+{{ page_title }} | Asset QR System
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            {{ page_title }}
+        </h2>
+
+        <p>
+            Create and manage a dynamic QR code linked to exactly one asset.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'assets:qr_code_list' %}"
+        class="button button-secondary"
+    >
+        Back to QR Codes
+    </a>
+
+</div>
+
+
+
+<div class="form-card">
+
+
+<form method="post" novalidate>
+
+{% csrf_token %}
+
+
+{% if form.non_field_errors %}
+
+<div class="form-error-summary">
+
+{% for error in form.non_field_errors %}
+
+<p>
+{{ error }}
+</p>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+
+
+<div class="form-grid">
+
+
+<!-- QR TYPE -->
+
+<div class="form-group">
+
+<label for="{{ form.qr_type.id_for_label }}">
+QR Type
+</label>
+
+{{ form.qr_type }}
+
+{% for error in form.qr_type.errors %}
+
+<div class="form-error">
+{{ error }}
+</div>
+
+{% endfor %}
+
+</div>
+
+
+
+<!-- ACTIVE -->
+
+<div class="form-group">
+
+<label>
+Status
+</label>
+
+<div class="checkbox-row">
+
+{{ form.is_active }}
+
+<label for="{{ form.is_active.id_for_label }}">
+Active
+</label>
+
+</div>
+
+{% for error in form.is_active.errors %}
+
+<div class="form-error">
+{{ error }}
+</div>
+
+{% endfor %}
+
+</div>
+
+
+</div>
+
+
+
+<!-- LINKED ASSET -->
+
+<div class="asset-selection">
+
+<h3>
+Linked Asset
+</h3>
+
+<p class="secondary-text">
+Select the asset that matches the chosen QR type.
+</p>
+
+
+
+<!-- PREMISE -->
+
+<div
+class="form-group qr-target"
+id="premise-field"
+>
+
+<label for="{{ form.premise.id_for_label }}">
+Premise
+</label>
+
+{{ form.premise }}
+
+{% for error in form.premise.errors %}
+
+<div class="form-error">
+{{ error }}
+</div>
+
+{% endfor %}
+
+</div>
+
+
+
+<!-- BLOCK -->
+
+<div
+class="form-group qr-target"
+id="block-field"
+>
+
+<label for="{{ form.block.id_for_label }}">
+Block / External Structure
+</label>
+
+{{ form.block }}
+
+{% for error in form.block.errors %}
+
+<div class="form-error">
+{{ error }}
+</div>
+
+{% endfor %}
+
+</div>
+
+
+
+<!-- LEVEL -->
+
+<div
+class="form-group qr-target"
+id="level-field"
+>
+
+<label for="{{ form.level.id_for_label }}">
+Level
+</label>
+
+{{ form.level }}
+
+{% for error in form.level.errors %}
+
+<div class="form-error">
+{{ error }}
+</div>
+
+{% endfor %}
+
+</div>
+
+
+
+<!-- ROOM -->
+
+<div
+class="form-group qr-target"
+id="room-field"
+>
+
+<label for="{{ form.room.id_for_label }}">
+Room / Open Area
+</label>
+
+{{ form.room }}
+
+{% for error in form.room.errors %}
+
+<div class="form-error">
+{{ error }}
+</div>
+
+{% endfor %}
+
+</div>
+
+
+
+<!-- COMPONENT -->
+
+<div
+class="form-group qr-target"
+id="component-field"
+>
+
+<label for="{{ form.component.id_for_label }}">
+Component
+</label>
+
+{{ form.component }}
+
+{% for error in form.component.errors %}
+
+<div class="form-error">
+{{ error }}
+</div>
+
+{% endfor %}
+
+</div>
+
+
+</div>
+
+
+
+<div class="form-actions">
+
+
+<a
+href="{% url 'assets:qr_code_list' %}"
+class="button button-secondary"
+>
+Cancel
+</a>
+
+
+<button
+type="submit"
+class="button"
+>
+{{ button_text }}
+</button>
+
+
+</div>
+
+
+</form>
+
+
+</div>
+
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const qrTypeField =
+            document.getElementById(
+                "{{ form.qr_type.id_for_label }}"
+            );
+
+
+        const targetFields = {
+
+            premise:
+                document.getElementById(
+                    "premise-field"
+                ),
+
+            block:
+                document.getElementById(
+                    "block-field"
+                ),
+
+            level:
+                document.getElementById(
+                    "level-field"
+                ),
+
+            room:
+                document.getElementById(
+                    "room-field"
+                ),
+
+            component:
+                document.getElementById(
+                    "component-field"
+                )
+
+        };
+
+
+        function updateTargetFields() {
+
+            const selectedType =
+                qrTypeField.value;
+
+
+            Object.entries(
+                targetFields
+            ).forEach(
+                ([type, field]) => {
+
+                    if (!field) {
+                        return;
+                    }
+
+
+                    field.style.display =
+                        type === selectedType
+                        ? "flex"
+                        : "none";
+
+                }
+            );
+
+        }
+
+
+        if (qrTypeField) {
+
+            qrTypeField.addEventListener(
+                "change",
+                updateTargetFields
+            );
+
+
+            updateTargetFields();
+
+        }
+
+    }
+);
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,783 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+Rooms & Open Areas | Asset QR System
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            Rooms & Open Areas
+        </h2>
+
+        <p>
+            Manage rooms, open areas and official room function
+            classifications.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'assets:room_create' %}"
+        class="button"
+    >
+        Add Room / Open Area
+    </a>
+
+</div>
+
+<form method="get">
+
+<select
+    name="sort"
+    class="form-control"
+    onchange="this.form.submit()"
+>
+
+
+<option value="">
+Sort By
+</option>
+
+
+<option
+value="newest"
+{% if request.GET.sort == "newest" %}
+selected
+{% endif %}
+>
+Newest
+</option>
+
+
+<option
+value="oldest"
+{% if request.GET.sort == "oldest" %}
+selected
+{% endif %}
+>
+Oldest
+</option>
+
+
+<option
+value="code_a"
+{% if request.GET.sort == "code_a" %}
+selected
+{% endif %}
+>
+Room Code A-Z
+</option>
+
+
+<option
+value="code_z"
+{% if request.GET.sort == "code_z" %}
+selected
+{% endif %}
+>
+Room Code Z-A
+</option>
+
+
+<option
+value="name_a"
+{% if request.GET.sort == "name_a" %}
+selected
+{% endif %}
+>
+Room Name A-Z
+</option>
+
+
+<option
+value="name_z"
+{% if request.GET.sort == "name_z" %}
+selected
+{% endif %}
+>
+Room Name Z-A
+</option>
+
+
+</select>
+
+</form>
+
+<div class="filter-card">
+
+<form method="get">
+
+
+<div class="filter-grid">
+
+
+<div class="filter-group">
+
+<label>
+Search
+</label>
+
+<input
+type="text"
+name="search"
+class="form-control"
+placeholder="Search room..."
+value="{{ request.GET.search|default:'' }}"
+>
+
+</div>
+
+
+
+
+<div class="filter-group">
+
+<label>
+Premise
+</label>
+
+
+<select
+name="premise"
+class="form-control"
+>
+
+
+<option value="">
+All Premises
+</option>
+
+
+{% for item in premises %}
+
+<option
+value="{{ item }}"
+{% if request.GET.premise == item %}
+selected
+{% endif %}
+>
+
+{{ item }}
+
+</option>
+
+{% endfor %}
+
+
+</select>
+
+</div>
+
+
+
+
+
+<div class="filter-group">
+
+<label>
+Block
+</label>
+
+
+<select
+name="block_name"
+class="form-control"
+>
+
+
+<option value="">
+All Blocks
+</option>
+
+
+{% for item in blocks %}
+
+
+<option
+value="{{ item }}"
+{% if request.GET.block_name == item %}
+selected
+{% endif %}
+>
+
+{{ item }}
+
+</option>
+
+
+{% endfor %}
+
+
+</select>
+
+</div>
+
+
+
+
+
+<div class="filter-group">
+
+<label>
+Level
+</label>
+
+
+<select
+name="level_name"
+class="form-control"
+>
+
+
+<option value="">
+All Levels
+</option>
+
+
+{% for item in levels %}
+
+
+<option
+value="{{ item }}"
+{% if request.GET.level_name == item %}
+selected
+{% endif %}
+>
+
+{{ item }}
+
+</option>
+
+
+{% endfor %}
+
+
+</select>
+
+</div>
+
+
+
+
+
+<div class="filter-group">
+
+<label>
+Room Name
+</label>
+
+
+<select
+name="room_name"
+class="form-control"
+>
+
+
+<option value="">
+All Rooms
+</option>
+
+
+{% for item in room_names %}
+
+
+<option
+value="{{ item }}"
+{% if request.GET.room_name == item %}
+selected
+{% endif %}
+>
+
+{{ item }}
+
+</option>
+
+
+{% endfor %}
+
+
+</select>
+
+</div>
+
+
+
+
+
+<div class="filter-group">
+
+<label>
+Space Type
+</label>
+
+
+<select
+name="space_type"
+class="form-control"
+>
+
+
+<option value="">
+All Types
+</option>
+
+
+{% for value,label in space_types %}
+
+
+<option
+value="{{ value }}"
+{% if request.GET.space_type == value %}
+selected
+{% endif %}
+>
+
+{{ label }}
+
+</option>
+
+
+{% endfor %}
+
+
+</select>
+
+</div>
+
+
+</div>
+
+
+
+<div class="filter-actions">
+
+
+<button
+type="submit"
+class="button"
+>
+Filter
+</button>
+
+
+<a
+href="{% url 'assets:room_list' %}"
+class="button button-secondary"
+>
+Reset
+</a>
+
+
+</div>
+
+
+</form>
+
+</div>
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Room Tag
+                </th>
+
+                <th>
+                    Room Code
+                </th>
+
+                <th>
+                    Room Name
+                </th>
+
+                <th>
+                    Level
+                </th>
+
+                <th>
+                    Space Type
+                </th>
+
+                <th>
+                    Security Level
+                </th>
+
+                <th>
+                    Room Function
+                </th>
+
+                <th>
+                    Area
+                </th>
+
+                <th>
+                    Actions
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+            {% for room in rooms %}
+
+
+                <tr>
+
+
+                    <!-- ===============================
+                         ROOM TAG
+                         =============================== -->
+
+                    <td>
+
+                        <strong>
+                            {{ room.room_tag }}
+                        </strong>
+
+                    </td>
+
+
+
+                    <!-- ===============================
+                         ROOM CODE
+                         =============================== -->
+
+                    <td>
+
+                        <strong>
+                            {{ room.code }}
+                        </strong>
+
+                    </td>
+
+
+
+                    <!-- ===============================
+                         ROOM NAME
+                         =============================== -->
+
+                    <td>
+
+                        <strong>
+                            {{ room.name }}
+                        </strong>
+
+                    </td>
+
+
+
+                    <!-- ===============================
+                         LEVEL / BLOCK / PREMISE
+                         =============================== -->
+
+                    <td>
+
+                        <strong>
+
+                            {{ room.level.code }}
+
+                            —
+
+                            {{ room.level.name }}
+
+                        </strong>
+
+
+                        {% if room.level.block %}
+
+                            <div class="secondary-text">
+
+                                Block:
+
+                                {{ room.level.block.code }}
+
+                                —
+
+                                {{ room.level.block.name }}
+
+                            </div>
+
+
+                            {% if room.level.block.premise %}
+
+                                <div class="secondary-text">
+
+                                    {{ room.level.block.premise.name }}
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- ===============================
+                         SPACE TYPE
+                         =============================== -->
+
+                    <td>
+
+                        {% if room.space_type == "room" %}
+
+                            <span class="badge badge-info">
+
+                                {{ room.get_space_type_display }}
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge">
+
+                                {{ room.get_space_type_display }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- ===============================
+                         SECURITY LEVEL
+                         =============================== -->
+
+                    <td>
+
+                        {% if room.security_level == "public" %}
+
+                            <span class="badge badge-success">
+
+                                {{ room.get_security_level_display }}
+
+                            </span>
+
+
+                        {% elif room.security_level == "staff" %}
+
+                            <span class="badge badge-warning">
+
+                                {{ room.get_security_level_display }}
+
+                            </span>
+
+
+                        {% elif room.security_level == "restricted" %}
+
+                            <span class="badge badge-danger">
+
+                                {{ room.get_security_level_display }}
+
+                            </span>
+
+
+                        {% else %}
+
+                            <span class="badge">
+
+                                {{ room.get_security_level_display }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- ===============================
+                         ROOM FUNCTION
+                         =============================== -->
+
+                    <td>
+
+                        {% if room.room_function %}
+
+                            <strong>
+
+                                {{ room.room_function.code }}
+
+                            </strong>
+
+
+                            <div class="secondary-text">
+
+                                {{ room.room_function.name }}
+
+                            </div>
+
+
+                            {% if room.room_function.category %}
+
+                                <div class="secondary-text">
+
+                                    {{ room.room_function.category }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                        {% elif room.function_code %}
+
+                            <strong>
+
+                                {{ room.function_code }}
+
+                            </strong>
+
+
+                            {% if room.function_name %}
+
+                                <div class="secondary-text">
+
+                                    {{ room.function_name }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                        {% else %}
+
+                            <span class="secondary-text">
+
+                                Not assigned
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- ===============================
+                         AREA
+                         =============================== -->
+
+                    <td>
+
+                        {% if room.area %}
+
+                            <strong>
+
+                                {{ room.area }} m²
+
+                            </strong>
+
+                        {% else %}
+
+                            <span class="secondary-text">
+
+                                —
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <!-- ===============================
+                         ACTIONS
+                         =============================== -->
+
+                    <td>
+
+                        <div class="action-buttons">
+
+
+                            <!-- VIEW ROOM QR -->
+
+                            <a
+                                href="{% url 'assets:room_qr_code' room.id %}"
+                                class="button button-small"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View QR
+                            </a>
+
+
+                            <!-- EDIT ROOM -->
+
+                            <a
+                                href="{% url 'assets:room_edit' room.id %}"
+                                class="button button-small button-secondary"
+                            >
+                                Edit
+                            </a>
+
+
+                        </div>
+
+                    </td>
+
+
+                </tr>
+
+
+            {% empty %}
+
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="empty-message"
+                    >
+
+                        No rooms or open areas have been registered.
+
+
+                        <div style="margin-top: 16px;">
+
+                            <a
+                                href="{% url 'assets:room_create' %}"
+                                class="button"
+                            >
+                                Add First Room
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+            {% endfor %}
+
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+{% endblock %}

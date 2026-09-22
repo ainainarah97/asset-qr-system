@@ -1,0 +1,618 @@
+{% extends "assets/base.html" %}
+{% load i18n %}
+
+{% block title %}
+DA6 Import Details | Asset QR System
+{% endblock %}
+
+{% block content %}
+
+
+<!-- =====================================================
+     PAGE HEADER
+     ===================================================== -->
+
+<div class="page-header">
+
+    <div>
+        <h2>
+            DA6 Import Details
+        </h2>
+
+        <p>
+            Review the detected Premise,
+            DA6 workbook validation result
+            and import status.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'assets:excel_import_create' %}"
+        class="button button-secondary"
+    >
+        New Import
+    </a>
+
+</div>
+
+
+<!-- =====================================================
+     IMPORT INFORMATION
+     ===================================================== -->
+
+<div class="detail-card">
+
+    <h3>
+        Import Information
+    </h3>
+
+
+    <p>
+        <strong>Import ID:</strong>
+        #{{ import_batch.id }}
+    </p>
+
+
+    <p>
+        <strong>Premise:</strong>
+
+        {% if import_batch.premise %}
+            {{ import_batch.premise.name }}
+        {% else %}
+            -
+        {% endif %}
+    </p>
+
+
+    <p>
+        <strong>DPA Number:</strong>
+
+        {% if import_batch.premise and import_batch.premise.dpa_number %}
+            {{ import_batch.premise.dpa_number }}
+        {% else %}
+            -
+        {% endif %}
+    </p>
+
+
+    <p>
+        <strong>Import Type:</strong>
+        {{ import_batch.get_import_type_display }}
+    </p>
+
+
+    <p>
+        <strong>Excel File:</strong>
+
+        {% if import_batch.file %}
+            {{ import_batch.file.name }}
+        {% else %}
+            -
+        {% endif %}
+    </p>
+
+
+    <p>
+        <strong>Status:</strong>
+
+        {% if import_batch.status == "completed" %}
+
+            <span class="badge badge-success">
+                {{ import_batch.get_status_display }}
+            </span>
+
+        {% elif import_batch.status == "failed" %}
+
+            <span class="badge badge-danger">
+                {{ import_batch.get_status_display }}
+            </span>
+
+        {% elif import_batch.status == "validated" %}
+
+            <span class="badge badge-info">
+                {{ import_batch.get_status_display }}
+            </span>
+
+        {% else %}
+
+            <span class="badge badge-warning">
+                {{ import_batch.get_status_display }}
+            </span>
+
+        {% endif %}
+
+    </p>
+
+
+    <p>
+        <strong>Uploaded By:</strong>
+
+        {% if import_batch.uploaded_by %}
+            {{ import_batch.uploaded_by.username }}
+        {% else %}
+            Unknown
+        {% endif %}
+    </p>
+
+
+    <p>
+        <strong>Uploaded:</strong>
+        {{ import_batch.created_at|date:"d M Y, H:i" }}
+    </p>
+
+</div>
+
+
+<!-- =====================================================
+     DPA / PREMISE DETECTION
+     ===================================================== -->
+
+{% if import_batch.premise %}
+
+<div
+    class="detail-card"
+    style="
+        border-left: 4px solid #0F8F87;
+    "
+>
+
+    <h3>
+        Premise Detection
+    </h3>
+
+    <p class="secondary-text">
+        The Premise was automatically identified
+        using the DPA Number stored in the workbook.
+    </p>
+
+
+    <div
+        style="
+            margin-top: 16px;
+            display: grid;
+            gap: 10px;
+        "
+    >
+
+        <div>
+            <strong>Premise Name:</strong>
+            {{ import_batch.premise.name }}
+        </div>
+
+        <div>
+            <strong>DPA Number:</strong>
+            {{ import_batch.premise.dpa_number }}
+        </div>
+
+        {% if import_batch.premise.department %}
+        <div>
+            <strong>Department:</strong>
+            {{ import_batch.premise.department }}
+        </div>
+        {% endif %}
+
+        {% if import_batch.premise.state %}
+        <div>
+            <strong>State:</strong>
+            {{ import_batch.premise.state }}
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     IMPORT SUMMARY
+     ===================================================== -->
+
+<div class="detail-card">
+
+    <h3>
+        Import Summary
+    </h3>
+
+
+    <div class="dashboard-summary">
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Total Records
+            </span>
+
+            <strong class="summary-value">
+                {{ import_batch.total_rows }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Processed
+            </span>
+
+            <strong class="summary-value">
+                {{ import_batch.successful_rows }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Failed
+            </span>
+
+            <strong class="summary-value">
+                {{ import_batch.failed_rows }}
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     FULL DA6 PROCESS
+     ===================================================== -->
+
+{% if import_batch.import_type == "full_da6" %}
+
+<div class="detail-card">
+
+    <h3>
+        DA6 Processing
+    </h3>
+
+    <p class="secondary-text">
+        The DA6 workbook is processed according
+        to the Premise and DAK asset hierarchy.
+    </p>
+
+
+    <div
+        style="
+            margin-top: 20px;
+            display: grid;
+            gap: 12px;
+        "
+    >
+
+
+        <!-- PREMISE -->
+
+        <div
+            style="
+                padding: 14px 16px;
+                border: 1px solid #b9e4df;
+                background: #f0f9f8;
+                border-radius: 8px;
+            "
+        >
+
+            <strong>
+                1. Premise / DPA
+            </strong>
+
+            <div class="secondary-text">
+                The DPA Number is used to identify
+                the Premise. An existing Premise is
+                reused; otherwise, a new Premise is created.
+            </div>
+
+        </div>
+
+
+        <!-- BLOCK -->
+
+        <div
+            style="
+                padding: 14px 16px;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+            "
+        >
+
+            <strong>
+                2. DAK Blok
+            </strong>
+
+            <div class="secondary-text">
+                New Blocks are created.
+                Existing Blocks under the same Premise
+                are skipped and are not overwritten.
+            </div>
+
+        </div>
+
+
+        <!-- ROOM -->
+
+        <div
+            style="
+                padding: 14px 16px;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+            "
+        >
+
+            <strong>
+                3. DAKRuang
+            </strong>
+
+            <div class="secondary-text">
+                Existing Levels are reused.
+                New Levels and Rooms are created.
+                Existing Rooms are skipped without
+                changing their stored information.
+            </div>
+
+        </div>
+
+
+        <!-- COMPONENT -->
+
+        <div
+            style="
+                padding: 14px 16px;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+            "
+        >
+
+            <strong>
+                4. DAKKomponen
+            </strong>
+
+            <div class="secondary-text">
+                New Asset Components are created
+                and linked to their Rooms.
+                Existing Component IDs are skipped
+                and are never overwritten.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     DUPLICATE POLICY
+     ===================================================== -->
+
+{% if import_batch.status == "validated" or import_batch.status == "completed" %}
+
+<div
+    class="detail-card"
+    style="
+        border-left: 4px solid #0F8F87;
+    "
+>
+
+    <h3>
+        Duplicate Record Policy
+    </h3>
+
+    <p class="secondary-text">
+        This import uses an additive-only process.
+        Existing asset records are protected from
+        changes during Excel import.
+    </p>
+
+
+    <div
+        style="
+            margin-top: 14px;
+            line-height: 1.8;
+        "
+    >
+
+        <div>
+            <strong>Existing Premise DPA</strong>
+            — Reuse
+        </div>
+
+        <div>
+            <strong>Existing Block</strong>
+            — Skip
+        </div>
+
+        <div>
+            <strong>Existing Level</strong>
+            — Reuse
+        </div>
+
+        <div>
+            <strong>Existing Room</strong>
+            — Skip
+        </div>
+
+        <div>
+            <strong>Existing Component</strong>
+            — Skip
+        </div>
+
+        <div>
+            <strong>New Records</strong>
+            — Create
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     STATUS MESSAGE
+     ===================================================== -->
+
+{% if import_batch.status == "validated" %}
+
+<div class="alert alert-warning">
+
+    <strong>
+        Validation Completed
+    </strong>
+
+    <p>
+        The DA6 workbook has passed validation.
+        The Premise has been identified from its
+        DPA Number.
+    </p>
+
+    <p>
+        No DAK asset records have been imported yet.
+        Existing records will be skipped during import.
+    </p>
+
+</div>
+
+
+{% elif import_batch.status == "completed" %}
+
+<div class="alert">
+
+    <strong>
+        Import Completed
+    </strong>
+
+    <p>
+        The DA6 workbook has been processed successfully.
+    </p>
+
+    <p>
+        New records were added to the detected Premise,
+        while existing asset records were left unchanged.
+    </p>
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     VALIDATION / IMPORT ERRORS
+     ===================================================== -->
+
+{% if import_batch.error_log %}
+
+<div class="detail-card">
+
+    <h3>
+        Validation / Import Errors
+    </h3>
+
+    <pre
+        style="
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0;
+            font-family: inherit;
+            line-height: 1.6;
+            color: #b91c1c;
+        "
+    >{{ import_batch.error_log }}</pre>
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     IMPORT BUTTON
+     ===================================================== -->
+
+{% if import_batch.status == "validated" and import_batch.import_type == "full_da6" %}
+
+<div
+    class="detail-card"
+    style="margin-top: 24px;"
+>
+
+    <h3>
+        Ready to Import
+    </h3>
+
+    <p class="secondary-text">
+        The workbook has passed validation.
+        Click the button below to add the new
+        DA6 records to the detected Premise.
+    </p>
+
+    <p
+        style="
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        "
+    >
+        Existing Blocks, Levels, Rooms and Components
+        will not be overwritten.
+    </p>
+
+
+    <form
+        method="post"
+        action="{% url 'assets:excel_import_execute' import_batch.id %}"
+        style="margin-top: 18px;"
+    >
+
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="button"
+            onclick="return confirm('Import the new DA6 records? Existing asset records will be skipped.');"
+        >
+            Import Valid Records
+        </button>
+
+    </form>
+
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     ACTIONS
+     ===================================================== -->
+
+<div
+    class="form-actions"
+    style="margin-top: 24px;"
+>
+
+    <a
+        href="{% url 'assets:excel_import_create' %}"
+        class="button"
+    >
+        Upload Another DA6
+    </a>
+
+    <a
+        href="{% url 'assets:dashboard' %}"
+        class="button button-secondary"
+    >
+        Back to Dashboard
+    </a>
+
+</div>
+
+
+{% endblock %}

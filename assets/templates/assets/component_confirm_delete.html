@@ -1,0 +1,33 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+Delete Component | Asset QR System
+{% endblock %}
+
+{% block content %}
+    <h2>Delete Component</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <p>
+            Are you sure you want to delete
+            <strong>{{ component }}</strong>?
+        </p>
+
+        <p>
+            This will remove the component record and its QR link.
+        </p>
+
+        <button type="submit">
+            Confirm Delete
+        </button>
+
+        <a
+            href="{% url 'assets:component_list' %}"
+            class="button"
+        >
+            Cancel
+        </a>
+    </form>
+{% endblock %}

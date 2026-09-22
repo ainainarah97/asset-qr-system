@@ -1,0 +1,546 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+Levels | Asset QR System
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h2>
+            Levels
+        </h2>
+
+        <p>
+            List of registered building levels.
+        </p>
+    </div>
+
+
+    <a
+        href="{% url 'assets:level_create' %}"
+        class="button"
+    >
+        Add Level
+    </a>
+
+</div>
+
+
+
+<!-- SORTING -->
+
+<form method="get">
+
+<select
+    name="sort"
+    class="form-control"
+    onchange="this.form.submit()"
+>
+
+
+<option value="">
+Sort By
+</option>
+
+
+<option
+value="newest"
+{% if request.GET.sort == "newest" %}
+selected
+{% endif %}
+>
+Newest
+</option>
+
+
+<option
+value="oldest"
+{% if request.GET.sort == "oldest" %}
+selected
+{% endif %}
+>
+Oldest
+</option>
+
+
+<option
+value="name_a"
+{% if request.GET.sort == "name_a" %}
+selected
+{% endif %}
+>
+Name A-Z
+</option>
+
+
+<option
+value="name_z"
+{% if request.GET.sort == "name_z" %}
+selected
+{% endif %}
+>
+Name Z-A
+</option>
+
+
+</select>
+
+</form>
+
+
+
+
+<!-- FILTER -->
+
+<div class="filter-card">
+
+
+<form method="get">
+
+
+<div class="filter-grid">
+
+
+
+<!-- SEARCH -->
+
+<div class="filter-group">
+
+<label>
+Search
+</label>
+
+
+<input
+
+type="text"
+
+name="search"
+
+class="form-control"
+
+placeholder="Search level..."
+
+value="{{ request.GET.search|default:'' }}"
+
+>
+
+</div>
+
+
+
+
+<!-- PREMISE -->
+
+<div class="filter-group">
+
+<label>
+Premise
+</label>
+
+
+<select
+name="premise"
+class="form-control"
+>
+
+
+<option value="">
+All Premises
+</option>
+
+
+
+{% for premise in premises %}
+
+
+<option
+
+value="{{ premise }}"
+
+{% if request.GET.premise == premise %}
+selected
+{% endif %}
+
+>
+
+{{ premise }}
+
+</option>
+
+
+{% endfor %}
+
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+<!-- BLOCK -->
+
+<div class="filter-group">
+
+<label>
+Block
+</label>
+
+
+<select
+
+name="block_name"
+
+class="form-control"
+
+>
+
+
+<option value="">
+All Blocks
+</option>
+
+
+
+{% for block in blocks %}
+
+
+<option
+
+value="{{ block }}"
+
+{% if request.GET.block_name == block %}
+selected
+{% endif %}
+
+>
+
+{{ block }}
+
+</option>
+
+
+{% endfor %}
+
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+<!-- LEVEL NAME -->
+
+<div class="filter-group">
+
+<label>
+Level Name
+</label>
+
+
+<select
+
+name="level_name"
+
+class="form-control"
+
+>
+
+
+<option value="">
+All Levels
+</option>
+
+
+
+{% for level_name in level_names %}
+
+
+<option
+
+value="{{ level_name }}"
+
+{% if request.GET.level_name == level_name %}
+selected
+{% endif %}
+
+>
+
+{{ level_name }}
+
+</option>
+
+
+{% endfor %}
+
+
+
+</select>
+
+
+</div>
+
+
+
+
+</div>
+
+
+
+
+<div class="filter-actions">
+
+
+<button
+type="submit"
+class="button"
+>
+Filter
+</button>
+
+
+
+<a
+
+href="{% url 'assets:level_list' %}"
+
+class="button button-secondary"
+
+>
+
+Reset
+
+</a>
+
+
+</div>
+
+
+
+</form>
+
+
+</div>
+
+
+
+
+
+
+<!-- TABLE -->
+
+
+<div class="table-container">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>
+Level Code
+</th>
+
+
+<th>
+Level Name
+</th>
+
+
+<th>
+Block
+</th>
+
+
+<th>
+Premise
+</th>
+
+
+<th>
+Sequence
+</th>
+
+
+<th>
+Action
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+
+<tbody>
+
+
+
+{% for level in levels %}
+
+
+<tr>
+
+
+
+<td>
+
+<strong>
+{{ level.code }}
+</strong>
+
+</td>
+
+
+
+
+<td>
+
+<strong>
+{{ level.name }}
+</strong>
+
+</td>
+
+
+
+
+<td>
+
+{{ level.block.code }}
+
+—
+
+{{ level.block.name }}
+
+</td>
+
+
+
+
+<td>
+
+{{ level.block.premise.name }}
+
+</td>
+
+
+
+
+<td>
+
+{{ level.sequence }}
+
+</td>
+
+
+
+
+<td>
+
+
+<div class="action-buttons">
+
+
+<a
+
+href="{% url 'assets:level_qr_code' level.id %}"
+
+class="button button-small"
+
+target="_blank"
+
+>
+
+View QR
+
+</a>
+
+
+
+<a
+
+href="{% url 'assets:level_update' level.id %}"
+
+class="button button-small button-secondary"
+
+>
+
+Edit
+
+</a>
+
+
+
+
+<a
+
+href="{% url 'assets:level_delete' level.id %}"
+
+class="button button-small button-danger"
+
+>
+
+Delete
+
+</a>
+
+
+
+</div>
+
+
+</td>
+
+
+
+</tr>
+
+
+
+{% empty %}
+
+
+<tr>
+
+<td colspan="6" class="empty-message">
+
+No levels found.
+
+</td>
+
+</tr>
+
+
+{% endfor %}
+
+
+
+</tbody>
+
+
+</table>
+
+
+</div>
+
+
+{% endblock %}

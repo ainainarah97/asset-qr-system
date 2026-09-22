@@ -1,0 +1,261 @@
+{% extends "assets/base.html" %}
+
+{% block title %}
+{% if room %}
+Edit Room | Asset QR System
+{% else %}
+Add Room | Asset QR System
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="page-header">
+
+    <div>
+
+        <h2>
+            {% if room %}
+                Edit Room / Open Area
+            {% else %}
+                Add Room / Open Area
+            {% endif %}
+        </h2>
+
+        <p>
+            Register and manage rooms, open areas and room function details.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<div class="form-card">
+
+<form method="post">
+
+{% csrf_token %}
+
+
+<div class="form-grid">
+
+
+<!-- LEVEL -->
+
+<div class="form-group form-group-full">
+
+<label for="{{ form.level.id_for_label }}">
+Level
+</label>
+
+{{ form.level }}
+
+{% if form.level.errors %}
+<div class="form-error">
+{{ form.level.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- ROOM CODE -->
+
+<div class="form-group">
+
+<label for="{{ form.code.id_for_label }}">
+Room Code
+</label>
+
+{{ form.code }}
+
+{% if form.code.errors %}
+<div class="form-error">
+{{ form.code.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- ROOM NAME -->
+
+<div class="form-group">
+
+<label for="{{ form.name.id_for_label }}">
+Room Name
+</label>
+
+{{ form.name }}
+
+{% if form.name.errors %}
+<div class="form-error">
+{{ form.name.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- SPACE TYPE -->
+
+<div class="form-group">
+
+<label for="{{ form.space_type.id_for_label }}">
+Space Type
+</label>
+
+{{ form.space_type }}
+
+{% if form.space_type.errors %}
+<div class="form-error">
+{{ form.space_type.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- SECURITY LEVEL -->
+
+<div class="form-group">
+
+<label for="{{ form.security_level.id_for_label }}">
+Security Level
+</label>
+
+{{ form.security_level }}
+
+{% if form.security_level.errors %}
+<div class="form-error">
+{{ form.security_level.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- ROOM FUNCTION -->
+
+<div class="form-group">
+
+<label for="{{ form.room_function.id_for_label }}">
+Room Function
+</label>
+
+{{ form.room_function }}
+
+{% if form.room_function.errors %}
+<div class="form-error">
+{{ form.room_function.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- AREA -->
+
+<div class="form-group">
+
+<label for="{{ form.area.id_for_label }}">
+Area (m²)
+</label>
+
+{{ form.area }}
+
+{% if form.area.errors %}
+<div class="form-error">
+{{ form.area.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- FUNCTION CODE -->
+
+<div class="form-group">
+
+<label for="{{ form.function_code.id_for_label }}">
+Function Code
+</label>
+
+{{ form.function_code }}
+
+{% if form.function_code.errors %}
+<div class="form-error">
+{{ form.function_code.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+
+<!-- FUNCTION NAME -->
+
+<div class="form-group">
+
+<label for="{{ form.function_name.id_for_label }}">
+Function Name
+</label>
+
+{{ form.function_name }}
+
+{% if form.function_name.errors %}
+<div class="form-error">
+{{ form.function_name.errors }}
+</div>
+{% endif %}
+
+</div>
+
+
+</div>
+
+
+
+<div class="form-actions">
+
+
+<a
+href="{% url 'assets:room_list' %}"
+class="button button-secondary"
+>
+Cancel
+</a>
+
+
+<button
+type="submit"
+class="button"
+>
+{% if room %}
+Save Changes
+{% else %}
+Save Room
+{% endif %}
+</button>
+
+
+</div>
+
+
+</form>
+
+</div>
+
+
+{% endblock %}
