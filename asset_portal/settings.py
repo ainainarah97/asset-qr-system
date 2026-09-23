@@ -26,11 +26,9 @@ SECRET_KEY = 'django-insecure-moizbh8=@yk-wuf7joq3oay=ja3$)2lolh%h_p19k52dwp%519
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "127.0.0.1",
+    "ainainarah.pythonanywhere.com",
     "localhost",
-    "192.168.1.191",
-    "192.168.1.176",
-    "192.168.1.131",
+    "127.0.0.1",
 ]
 
 
@@ -145,6 +143,8 @@ LOCALE_PATHS = [
 ]
 
 STATIC_URL = "static/"
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 
